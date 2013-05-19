@@ -186,13 +186,16 @@ sub signalOther($;$$)
         $$status = "Found phrase /NAVOPDEF/. Not going to try and parse as other signal.";
         return 0;
     }
+
+    # See if signal is a MATDEM. More restrictive search than the next block
+    my $sigtype = 'MATDEM' if $signal =~ /^(\h|subject:|subj:|opdef)+\h*matdem/im;
     
     # Create a search based on all searchable signal types
     my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
     my @search;
     push @search, $_->name for @sigtypes;
     my $s = join '|', @search;
-    my $sigtype = $1 if ($signal =~ /($s)/);
+    $sigtype = $1 if ($signal =~ /($s)/);
 
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $parser = ADBOS::Parse->new();
