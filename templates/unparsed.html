@@ -5,7 +5,7 @@
 <div class="content_wrapper">
 
 
-        [% UNLESS view.size %]
+        [% IF error AND view.size == 0 %]
             <div class="error">
                 [% error %]
             </div>
