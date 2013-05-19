@@ -187,15 +187,15 @@ sub signalOther($;$$)
         return 0;
     }
     
-    my $opdef_rs = $self->sch->resultset('Opdef');
-    my $parser = ADBOS::Parse->new();
-
     # Create a search based on all searchable signal types
     my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
     my @search;
     push @search, $_->name for @sigtypes;
     my $s = join '|', @search;
     my $sigtype = $1 if ($signal =~ /($s)/);
+
+    my $opdef_rs = $self->sch->resultset('Opdef');
+    my $parser = ADBOS::Parse->new();
 
     # First try signal sender and OPDEF ID
     if (my $values = $parser->otherFm($signal))
