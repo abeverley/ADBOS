@@ -215,13 +215,17 @@ sub signalOther($;$$)
 
     if (my $values = $parser->otherTo($signal))
     {
-        my ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
-                                          number_serial => $values->{number_serial},
-                                          type          => $values->{type},
-                                          'ship.name'   => $values->{ship}
-                                         } , { join => 'ship' } );
-        my $opdefs_id = $opdef->id if $opdef;
-
+        my $opdefs_id;
+        foreach my $ship (@{$values->{ship}})
+        {
+            my ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
+                                              number_serial => $values->{number_serial},
+                                              type          => $values->{type},
+                                              'ship.name'   => $ship
+                                             } , { join => 'ship' } );
+            ($opdefs_id = $opdef->id) && last if $opdef;
+        }
+        
         if ($opdefs_id)
         {
             $$status = '';
@@ -230,11 +234,11 @@ sub signalOther($;$$)
 
         if ($$status)
         {
-            $$status = sprintf("$$status or %s %s %s-%s", $values->{ship},
+            $$status = sprintf("$$status or %s %s %s-%s", join (', ',@{$values->{ship}}),
               $values->{type}, $values->{number_serial}, $values->{number_year});
         } else
         {
-            $$status = sprintf("Failed to find related OPDEF %s %s %s-%s", $values->{ship},
+            $$status = sprintf("Failed to find related OPDEF %s %s %s-%s", join (', ',@{$values->{ship}}),
               $values->{type}, $values->{number_serial}, $values->{number_year});
         }
     }

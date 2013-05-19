@@ -175,16 +175,19 @@ sub otherFm()
 }
 
 sub otherTo()
-{   my ($self, $message) = @_;
+{   my ($self, $_) = @_;
 
+    s/\r*//g; # Remove any nasty carriage-returns
+
+    # Look for action addressees first
+    my ($action) = m!^TO\s(.*?)\n(INFO\s|BT\n)!ms;
+    my @ships    = ($action =~ m!^.*/(.*)$!gm);
+    
     my %values;
-    $message =~ s/\r*//g; # Remove any nasty carriage-returns
-
-    if ($message =~ m!TO\s.*?/?(?<ship>[\hA-Z0-9]+)\n(.|\s)*
-                    (?<type>ME|WE|AR|OP)[-\s]+ 
-                    (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
+    if (m!(?<type>ME|WE|AR|OP)[-\s]+ 
+          (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
     {
-        $values{ship} = $+{ship};
+        $values{ship} = \@ships;
         $values{type} = $+{type};
         $values{number_serial} = $+{number_serial};
         $values{number_year} = $+{number_year};
