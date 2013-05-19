@@ -205,8 +205,7 @@ sub signalOther($;$$)
                                           type          => $values->{type},
                                           'ship.name'   => $values->{ship}
                                          } , { join => 'ship' } );
-        my $opdefs_id = $opdef->id if $opdef;
-        return $self->signalStore($signal, $opdefs_id, $sigtype, undef, $signalsid) if $opdefs_id;
+        return $self->signalStore($signal, $opdef->id, $sigtype, undef, $signalsid) if $opdef;
 
         $$status = sprintf("Failed to find related OPDEF %s %s %s-%s", $values->{ship},
           $values->{type}, $values->{number_serial}, $values->{number_year});
@@ -215,21 +214,22 @@ sub signalOther($;$$)
 
     if (my $values = $parser->otherTo($signal))
     {
-        my $opdefs_id;
+        my $opdef;
         foreach my $ship (@{$values->{ship}})
         {
-            my ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
+            ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
                                               number_serial => $values->{number_serial},
                                               type          => $values->{type},
                                               'ship.name'   => $ship
                                              } , { join => 'ship' } );
-            ($opdefs_id = $opdef->id) && last if $opdef;
+            last if $opdef;
         }
         
-        if ($opdefs_id)
+        if ($opdef)
         {
-            $$status = '';
-            return $self->signalStore($signal, $opdefs_id, $sigtype, undef, $signalsid);
+            $$status = sprintf("Associated signal with OPDEF %s %s %s-%s", $opdef->ship->name,
+              $values->{type}, $values->{number_serial}, $values->{number_year});
+            return $self->signalStore($signal, $opdef->id, $sigtype, undef, $signalsid);
         }
 
         if ($$status)

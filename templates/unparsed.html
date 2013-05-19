@@ -5,6 +5,12 @@
 <div class="content_wrapper">
 
 
+        [% UNLESS view.size %]
+            <div class="error">
+                [% error %]
+            </div>
+        [% END %]
+
     <div class="leftcol">
         [% IF signals.size %]
             <table>
