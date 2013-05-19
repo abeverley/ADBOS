@@ -180,6 +180,13 @@ sub signalOther($;$$)
 {
     # Try to process a signal that wasn't parsed
     my ($self, $signal, $status, $signalsid) = @_;
+    
+    if ($signal =~ m!/NAVOPDEF/!)
+    {
+        $$status = "Found phrase /NAVOPDEF/. Not going to try and parse as other signal.";
+        return 0;
+    }
+    
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $parser = ADBOS::Parse->new();
 
