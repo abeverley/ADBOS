@@ -42,7 +42,7 @@ sub connect()
     my $dbname = $self->{SB_name};
 
     $self->{sch} = ADBOS::Schema->connect(
-      "dbi:mysql:database=$dbname;host=adbosdb", $self->{SB_user}, $self->{SB_pass}
+      "dbi:mysql:database=$dbname", $self->{SB_user}, $self->{SB_pass}
      , {RaiseError => 1, AutoCommit => 1, mysql_enable_utf8 => 1}
     ) or error __x"unable to connect to database {name}: {err}"
            , name => $dbname, err => $DBI::errstr;
@@ -68,7 +68,8 @@ sub opdefSummary($$)
 
     my @opdefs = $opdef_rs->search(%$search,
         { join     => 'ship',
-          order_by => $sort
+          order_by => $sort,
+          rows     => 200
         }
     )->all;
 
