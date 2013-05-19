@@ -161,8 +161,8 @@ sub otherFm()
     my %values;
     $message =~ s/\r*//g; # Remove any nasty carriage-returns
  
-    if ($message =~ m!FM\h(?<ship>[\hA-Z]*)(.|\s)*
-                    (OPDEF\s(?<type>ME|WE|AR|OP)|(?<type>ME|WE|AR|OP)\sOPDEF)\s?
+    if ($message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
+                    (?<type>ME|WE|AR|OP)[-\s]+
                     (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
     {
         $values{ship} = $+{ship};
@@ -180,8 +180,8 @@ sub otherTo()
     my %values;
     $message =~ s/\r*//g; # Remove any nasty carriage-returns
 
-    if ($message =~ m!TO\s.*?/?(?<ship>[\hA-Z]*)\n(.|\s)*
-                    (OPDEF\s(?<type>ME|WE|AR|OP)|(?<type>ME|WE|AR|OP)\sOPDEF)\s? 
+    if ($message =~ m!TO\s.*?/?(?<ship>[\hA-Z0-9]+)\n(.|\s)*
+                    (?<type>ME|WE|AR|OP)[-\s]+ 
                     (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
     {
         $values{ship} = $+{ship};
