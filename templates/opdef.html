@@ -1,0 +1,99 @@
+[% INCLUDE header.html %]
+
+<h1>[% opdef.ship.name %] [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] (CAT [% opdef.category.name %])</h1>
+
+<div class="content_wrapper">
+
+  <div class="leftcol">
+      <table>
+
+      <tr><td>
+      <a href="/opdef/[% opdef.id %]">Current status</a>
+      </td></tr>
+
+      [% FOREACH part IN opdef.signals %]
+        <tr><td><a href="/opdef/[% opdef.id %]/[% part.id %]">
+          [% IF part.sigtype.name == "SITREP" %]
+            Sitrep [% part.sitrep %]
+          [% ELSIF part.sigtype.name == "OPDEF"  %]
+            Initial signal
+          [% ELSIF part.sigtype.name == "RECT" %]
+            Rectified signal
+          [% ELSIF part.sigtype.name %]
+            [% part.sigtype.name %]
+          [% ELSE %]
+            [Unknown signal]
+          [% END %]
+        </a>
+        [% IF part.dtg %]
+                ([% part.dtg.strftime('%d%H%MZ %b %y') %])
+        [% END %]
+        </td></tr>
+      [% END %]
+      </table>
+  </div>
+
+  <div class="rightcol">
+      [% IF error %]
+          <div class="error">
+              [% error %]
+          </div>
+      [% END %]
+
+      [% IF signal %]
+        <pre>[% signal.content %]</pre>
+      [% ELSE %]
+        [% IF user.type == "admin" || user.type == "member" %]
+            <form id="onbrief" method="post">
+            [% IF opdef.ship.task.onbrief AND opdef.category.id <= 7 AND opdef.rectified == 0 %]
+              <p>This OPDEF is on the brief for task [% opdef.ship.task.name %]</p>
+            [% ELSIF opdef.onbrief %]
+              <p>This OPDEF is on the brief. <a href="#"
+                onclick="document.getElementById('onbrief').submit();">Click here</a> to remove it from
+                the brief.
+              <input type="hidden" name="onbrief" value="0">
+            [% ELSE %]
+              <p>This OPDEF is not on the brief. <a href="#"
+                onclick="document.getElementById('onbrief').submit();">Click here</a> to add it to
+                the brief.
+              <input type="hidden" name="onbrief" value="1">
+            [% END %]
+            </form>
+        [% END %]
+        <table class="opdef">
+        <tr><td>Line 5:</td><td>[% opdef.line5 %]</td></tr>
+        <tr><td>ERG code:</td><td>[% opdef.erg_code %]</td></tr>
+        <tr><td>Parent equip:</td><td>[% opdef.parent_equip %]</td></tr>
+        <tr><td class="nowrap">Defective unit:</td><td>[% opdef.defective_unit %]</td></tr>
+        <tr><td>Defect:</td><td>[% opdef.defect %]</td></tr>
+        <tr><td class="nowrap">Latest remarks:</td><td>[% opdef.remarks %]</td></tr>
+        </table>
+
+	[% IF opdef.comments %]
+            <h3>Comments</h3>
+            <table class="comments">
+            [% zebra = "odd" %]
+            [% FOREACH comment IN comments %]
+            <tr class="[% zebra %]">
+            <td class="top dotted"><strong>[% comment.user.username %]</strong><br />[% comment.time.ymd %]</td>
+            <td class="top dotted">[% FILTER html_line_break %][% comment.comment %][% END %]</td>
+            </tr>
+            [% IF zebra == "odd" %][% zebra = "even" %][% ELSE %][% zebra = "odd" %][% END %]
+            [% END %]
+            </table>
+        [% END %]
+
+        <form class="comments" method="POST">
+        <div class="padtop">
+        <textarea class="formstyle comments" name="comment"></textarea><br />
+        <input class="submit tall" type="submit" value="Add comment" name="commentnew">
+        </div>
+        </form>
+        
+      [% END %]
+  </div>
+</div>
+
+
+
+[% INCLUDE footer.html %]

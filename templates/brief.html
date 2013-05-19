@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Daily Brief</title>
+<link href="/brief.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<div class="body">
+
+[% FOREACH task IN tasks %]
+    [% IF task.ships %]
+        <h1>[% task.name %]</h2>
+        [% FOREACH ship IN task.ships %]
+            <h2>[% ship.name %]</h2>
+            [% FOREACH opdef IN ship.opdefs %]
+                [% IF opdef.modified.epoch > time - 86400 OR (opdef.comments.first.time.epoch AND opdef.comments.first.time.epoch > time - 86400) %]
+                    <h3 class="highlight">
+                [% ELSE %]
+                    <h3>
+                [% END %]
+                OPDEF [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] ([% opdef.category.name %]):
+                        [% IF opdef.rectified %]<strong>Rectified</strong>[% END %]
+               	        [% opdef.line5 %]</h3>
+                <div class="comments">
+                [% FOREACH comment IN opdef.comments %]
+                    [% LAST IF loop.index == 10 %]
+                        <p><u>[% comment.time.ymd %] (by [% comment.user.username %])</u>: [% FILTER html_line_break %][% comment.comment %][% END %]</p>
+                [% END %]
+                </div>
+            [% END %]
+            <p>&nbsp;</p>
+        [% END %]
+    [% END %]
+    <hr>
+[% END %]
+
+</div>
+
+</body></html>

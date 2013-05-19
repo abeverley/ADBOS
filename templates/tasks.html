@@ -1,0 +1,39 @@
+[% INCLUDE header.html %]
+
+  <h1>Tasks</h1>
+
+  <div>
+  <form id="newtask" method="POST">
+  <div class="form_row">
+      <label class="formstyle" for="name">New task:</label>
+      <input class="formstyle" type="textbox" name="name">
+      <input class="submit tall" type="submit" value="Add" name="new">
+  </div>
+  </form>
+  </div>
+  <div>
+  <table class="tasks center padtop">
+  <tr><th>On brief</th><th>Name</th><th>Ship(s)</th></tr>
+  [% FOREACH task IN tasks %]
+      <tr>
+      <td class="center">
+      	  [% IF task.onbrief %]
+              <a href="?remove=[% task.id %]"><img src="/images/tick.png" alt="On brief. Click to remove."></a>
+          [% ELSE %]
+              <a href="?add=[% task.id %]"><img src="/images/cross.png" alt="Not on brief. Click to add."></a>
+          [% END %]
+      </td>
+      <td>[% task.name %]</td>
+      <td>
+          [% s = [] %]
+          [% FOREACH ship IN task.ships %]
+              [% s.push(ship.name) %]
+          [% END %]
+          [% s.join(', ') %]
+      </td>
+      </tr>
+  [% END %]
+  </table>
+ </div>
+ 
+[% INCLUDE footer.html %]

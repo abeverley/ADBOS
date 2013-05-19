@@ -1,0 +1,56 @@
+body {
+ font-family: Helvetica, Verdana, Arial, sans-serif;
+}
+
+h1 {
+	margin:0px;
+	padding:0px;
+	padding-top:10px;
+}
+
+h2 {
+	margin:0px;
+	padding:0px;
+	font-size:1.2em;
+}
+
+h3 {
+	margin:0px;
+	padding:0px;
+	margin-top:5px;
+	font-size:0.8em;
+	font-weight:normal;
+}
+
+@media screen
+{
+    h3.highlight {
+        background-color:yellow;
+    }
+}
+
+@media print
+{
+    h3.highlight {
+        border: 1px solid;
+    }
+}
+
+p{
+    padding: 0px;
+    margin: 0px;
+    font-size: 0.8em;
+}
+
+div.comments{
+    padding-left:30px;
+    padding-top:5px;
+}
+
+hr {
+	clear: both;
+	border: 0px;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 20px;
+}
+

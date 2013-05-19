@@ -1,0 +1,74 @@
+[% INCLUDE header.html %]
+
+[% IF errors.size %]
+    <div class="error">
+    [% FOREACH error IN errors %]
+        [% error %]<br />
+    [% END %]
+    </div>
+[% ELSIF success %]
+    <div class="success">
+        [% success %]
+    </div>
+[% END %]
+
+[% IF action OR allusers.size == 0 %]
+
+    [% IF action == "create" %]
+        <h2>Create user</h2>
+    [% ELSE %]
+        <h2>Update user [% nuser.username %]</h2>
+    [% END %]
+    <form id="loginform" method="POST">
+    <div class="form_row">
+        <label class="formstyle" for="forename">Firstname:</label>
+        <input class="formstyle" type="textbox" name="forename" value="[% nuser.forename %]">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="surname">Surname:</label>
+        <input class="formstyle" type="textbox" name="surname" value="[% nuser.surname %]">
+    </div>
+    [% IF action == "create" %]
+        <div class="form_row">
+            <label class="formstyle" for="username">Username:</label>
+            <input class="formstyle" type="textbox" name="username" value="[% nuser.username %]">
+        </div>
+    [% END %]
+    <div class="form_row">
+        <label class="formstyle" for="username">Type:</label>
+        <select class="formstyle" name="type">
+            <option value="viewer" [% IF nuser.type == "viewer" %]selected[% END %]>Viewer</option>
+            <option value="member" [% IF nuser.type == "member" %]selected[% END %]>Member</option>
+            <option value="admin" [% IF nuser.type == "admin" %]selected[% END %]>Admin</option>
+        </select>
+    </div>
+    <div>
+    [% IF action == "create" %]
+        <input class="submit" type="submit" value="Create" name="create">
+    [% ELSE %]
+        <input class="submit tall" type="submit" value="Update" name="update">
+        <input class="submit tall" type="submit" value="Delete" name="delete">
+        <input class="submit tall" type="submit" value="Reset password"
+        name="resetpw">
+        <input type="hidden" value="[% nuser.username %]" name="username">
+    [% END %]
+    
+    </div>
+    </form>
+
+[% ELSE %]
+
+    <h2>Existing Users</h2>
+    <p>Click <a href="?new=1">here</a> to create a new user</p>
+    <table class="users">
+    [% FOREACH user IN allusers %]
+        <tr><td><a href="/users/[% user.id %]">[% user.username %]</a></td>
+            <td>[% user.surname %], [% user.forename %]</td>
+            <td>[% user.type %]</td>
+        </tr>
+    [% END %]
+    </table>
+
+[% END %]
+
+[% INCLUDE footer.html %]

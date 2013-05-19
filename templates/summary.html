@@ -1,0 +1,36 @@
+[% INCLUDE header.html %]
+
+<!-- [% INCLUDE filter.html %] -->
+
+<p><a href="?onbrief=1">Show only OPDEFs on brief</a></p>
+
+<div class="summary">
+<table class="opdeflist">
+[% FOREACH opdef IN opdefs %]
+[% IF lastship != opdef.shipname %]
+<tr><td colspan='4'><h2 class="row">[% opdef.shipname %]</h2></td></tr>
+[% lastship = opdef.shipname %]
+[% END %]
+[% IF opdef.onbrief %]
+  <tr class="red">
+[% ELSIF opdef.rectified %]
+  <tr class="green">
+[% ELSIF opdef.category.name.substr(0,1) == 'A' %]
+  <tr class="orange">
+[% ELSIF opdef.category.name.substr(0,1) == 'B' %]
+  <tr class="yellow">
+[% ELSIF opdef.category.name.substr(0,1) == 'C' %]
+  <tr class="blue">
+[% ELSE %]
+  <tr>
+[% END %]
+<td class="opdeflist nowrap">[% opdef.ship.name %]</td>
+<td class="opdeflist nowrap"><a class="opdef" href='/opdef/[% opdef.id %]'>[% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %]</a></td>
+<td class="opdeflist nowrap">[% opdef.category.name %]</td>
+<td class="opdeflist">[% opdef.line5 %]</td>
+</tr>
+[% END %]
+</table>
+</div>
+
+[% INCLUDE footer.html %]

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cp -a ADBOS/* /usr/local/share/perl/5.10.1/ADBOS/
+cp *.css /var/www/opdef.andybev.com/
+cp syops.html /var/www/opdef.andybev.com/
+cp images/* /var/www/opdef.andybev.com/images/
+cp index.pl /var/www/opdef.andybev.com/
+cp templates/* /var/www/opdef.andybev.com/

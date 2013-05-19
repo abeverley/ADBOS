@@ -1,0 +1,50 @@
+[% INCLUDE header.html %]
+[% IF opdefs %]
+  <h1>[% ship.name %]</h1>
+
+  [% IF user.type == "admin" || user.type == "member" %]
+  <form id="shiptask" method="POST">
+  <div class="form_row">
+      <label class="formstyle" for="name">Task:</label>
+      <select name="task" class="formstyle">
+      <option></option>
+      [% FOREACH task IN tasks %]
+      <option value=[% task.id %]
+          [% IF task.id == ship.tasks_id %]
+              selected
+          [% END %]
+      >[% task.name %]</option>
+      [% END %]
+      </select>
+      <input class="submit" type="submit" value="Update" name="shipupdate">
+  </div>
+  </form>
+  [% END %]
+  
+  [% IF all %]
+  <p>Showing all OPDEFs. (<a href="?all=0">Show only extant and recently rectified
+  OPDEFs</a>.)</p>
+  [% ELSE %]
+  <p>Showing only extant and recently rectified OPDEFs. (<a href="?all=1">Show
+  all OPDEFs</a>.)</p>
+  [% END %]
+  <table>
+  [% FOREACH opdef IN opdefs %]
+    [% IF opdef.type != prevtype %]
+      <tr><td colspan="4"><h2 class="row">[% opdef.type %]</h2></td></tr>
+    [% END %]
+    <tr>
+    <td class="opdeflist nowrap"><a href='/opdef/[% opdef.id %]'>[% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %]</a></td>
+    <td class="opdeflist nowrap">[% opdef.category.name %]</td>
+    <td class="opdeflist">[% opdef.line5 %]</td>
+    </tr>
+    [% prevtype = opdef.type %]
+  [% END %]
+  </table>
+[% ELSE %]
+  [% FOREACH ship IN ships %]
+  <a href="/ships/[% ship.id %]">[% ship.name %]</a><br />
+  [% END %]
+[% END %]
+
+[% INCLUDE footer.html %]

@@ -1,0 +1,43 @@
+[% INCLUDE header.html %]
+
+<h1>Unparsed Signals</h1>
+
+<div class="content_wrapper">
+
+
+    <div class="leftcol">
+        [% IF signals.size %]
+            <table>
+            [% FOREACH signal IN signals %]
+                <tr>
+                <td><a href='[% signal.id %]'>Signal ID [% signal.id %]</a></td>
+                </tr>
+            [% END %]
+            </table>
+        [% ELSE %]
+            No unparsed signals
+        [% END %]
+    </div>
+
+    [% IF view.size %]
+    <div class="rightcol">
+        [% IF error %]
+            <div class="error">
+                [% error %]
+            </div>
+        [% END %]
+        <form method="post">
+        <div class="form_row">
+            <textarea class="formstyle" cols="72" rows="35" name="signal">[% view.content %]</textarea>
+        </div>
+        <div class="form_row">
+            <input class='submit' type='submit' value='Retry Parse' name='retry'>
+            <input class='submit' type='submit' value='Delete' name='delete'>
+        </div>
+        <input type="hidden" name="id" value="[% view.id %]">
+        </form>
+    </div>
+    [% END %]
+</div>
+
+[% INCLUDE footer.html %]

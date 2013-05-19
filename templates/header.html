@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>[% title %]</title>
+<link href="/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<div class="banner">
+  <div id="menu">
+    <ul>
+    <li><a href='/summary/'>OPDEF Summary</a></li>
+    <li><a href='/ships/'>Ships</a></li>
+    [% IF user.type %]
+        <li><a href='/brief/'>Brief</a></li>
+    [% END %]
+    [% IF user.type == "admin" || user.type == "member" %]
+        <li><a href='/tasks/'>Tasks</a></li>
+        <li><a href='/unparsed/'>Unparsed</a></li>
+    [% END %]
+    [% IF user.type == "admin" %]
+        <li><a href='/users/'>Users</a></li>
+    [% END %]
+    </ul>
+  </div>
+  <div class="username">
+  [% IF user %]
+    Logged in as [% user.username %].
+    <a href="?logout=1">Logout</a>
+  [% ELSE %]
+    <a href="?login=1">Login</a>
+  [% END %]
+  </div>
+</div>
+<hr>

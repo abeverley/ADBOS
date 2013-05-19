@@ -1,0 +1,49 @@
+<div class="floatleft">Filter:</div>
+
+<form method="GET" action="?summary=1">
+<div class="floatleft">
+[% count = 1 %]
+[% FOREACH s IN search.pairs %]
+  <select name="field[% count %]">
+  [% FOREACH f IN fields.pairs %]
+    <option value="[% f.key %]" [% IF s.key == f.key %]selected[% END %]>[% f.value %]</option>
+  [% END %]
+  </select>
+  <input type="text" name="value[% count %]" value="[% s.value %]">
+  <br />
+  [% count = count + 1 %]
+[% END %]
+
+<select name="field[% count %]">
+<option selected></option>
+[% FOREACH f IN fields.pairs %]
+  <option value="[% f.key %]">[% f.value %]</option>
+[% END %]
+</select>
+<input type="text" name="value[% count %]">
+</div>
+
+<div class="floatleft">Sort:</div>
+<div class="floatleft">
+[% count = 1 %]
+[% FOREACH s IN sort %]
+  <select name="sort[% count %]">
+  <option selected></option>
+  [% FOREACH f IN fields.pairs %]
+    <option value="[% f.key %]" [% IF s.values.first == f.key %]selected[% END %]>[% f.value %]</option>
+  [% END %]
+  </select>
+  <br />
+  [% count = count + 1 %]
+[% END %]
+
+<select name="sort[% count %]">
+<option selected></option>
+[% FOREACH f IN fields.pairs %]
+  <option value="[% f.key %]">[% f.value %]</option>
+[% END %]
+</select>
+<input type="submit" name="submit" value="Update">
+</div>
+</form>
+

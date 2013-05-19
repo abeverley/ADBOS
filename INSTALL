@@ -1,0 +1,28 @@
+On database
+===========
+apt-get install libdevice-serialport-perl
+apt-get install mysql-server
+apt-get install libdbix-class-perl
+apt-get install libfile-slurp-perl
+
+Import DB schema (mysql -p -D opdef < opdef.sql)
+
+On web server
+=============
+apt-get install libtemplate-perl
+apt-get install mysql-server
+apt-get install libdbix-class-perl
+apt-get install libapache-dbi-perl
+apt-get install libapache2-request-perl
+apt-get install libdatetime-format-dbi-perl
+apt-get install libstring-random-perl
+apt-get install libdatetime-format-mysql-perl
+Also need DateTime::Format::Duration
+
+( libapache2-reload-perl )
+
+a2enmod apreq
+
+Copy and enable opdef apache config into sites-available
+Update Apache mime.conf
+
