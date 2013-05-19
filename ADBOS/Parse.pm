@@ -182,8 +182,9 @@ sub otherTo()
     # Look for action addressees first
     my ($action) = m!^TO\s(.*?)\n(INFO\s|BT\n)!ms;
     my @ships    = ($action =~ m!^.*/(.*)$!gm);
-    
+
     my %values;
+    # First look for OPDEF number
     if (m!(?<type>ME|WE|AR|OP)[-\s]+ 
           (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
     {
@@ -192,7 +193,24 @@ sub otherTo()
         $values{number_serial} = $+{number_serial};
         $values{number_year} = $+{number_year};
 
-        \%values;   
+        return \%values;   
+    }
+    
+    # Then look for signal reference
+    if (m!BT\n
+          (.|\n)*?
+          (?<ship>[A-Z0-9\h]*?)\h
+          ([A-Z0-9]{3}(\h|/))*
+          (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
+    {
+        if ($+{ship} eq 'YR' || $+{ship} eq 'YOUR')
+        {
+            $values{ship} = \@ships;
+        } else {
+            $values{ship} = [ $+{ship} ];
+        }
+        $values{dtg} = $+{dtg};
+        return \%values;
     }
 }
 

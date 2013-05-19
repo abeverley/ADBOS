@@ -191,7 +191,7 @@ sub signalOther($;$$)
     my $parser = ADBOS::Parse->new();
 
     # Create a search based on all searchable signal types
-    my @sigtypes = $self->sch->resultset('Sigtype')->search(search=>1)->all;
+    my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
     my @search;
     push @search, $_->name for @sigtypes;
     my $s = join '|', @search;
@@ -211,39 +211,65 @@ sub signalOther($;$$)
           $values->{type}, $values->{number_serial}, $values->{number_year});
     }
 
+    # See what we can glean from the action addressees
+    my $values = $parser->otherTo($signal);
 
-    if (my $values = $parser->otherTo($signal))
+    if (!$values) {
+        $$status = "Failed to find reference to OPDEF" if defined $status;
+        return 0;
+    }
+
+    my $opdef;
+    my $allships = join ', ', @{$values->{ship}};
+
+    if ($values->{dtg})
     {
-        my $opdef;
+        # We've only got a DTG to go on...
+        my $dtg = dtgToUnix ($values->{dtg});
+        my $signal_rs = $self->sch->resultset('Signal');
+
+        foreach my $ship (@{$values->{ship}})
+        {
+            my ($signal) = $signal_rs->search({ dtg => $dtg,
+                                               'ship.name'   => $ship
+                                             } , { join => { opdef => 'ship' } }
+                                            );
+            if ($signal) { $opdef = $signal->opdef; last }
+            $$status = sprintf("Failed to find any associated OPDEF for DTG %s for ship(s) %s",
+                $values->{dtg}, $allships);
+        }
+        $signal || return 0;
+    }
+    else
+    {
+        # Easy, we've got an OPDEF number to search for
         foreach my $ship (@{$values->{ship}})
         {
             ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
-                                              number_serial => $values->{number_serial},
-                                              type          => $values->{type},
-                                              'ship.name'   => $ship
-                                             } , { join => 'ship' } );
+                                           number_serial => $values->{number_serial},
+                                           type          => $values->{type},
+                                           'ship.name'   => $ship
+                                          } , { join => 'ship' } );
             last if $opdef;
         }
-        
-        if ($opdef)
-        {
-            $$status = sprintf("Associated signal with OPDEF %s %s %s-%s", $opdef->ship->name,
-              $values->{type}, $values->{number_serial}, $values->{number_year});
-            return $self->signalStore($signal, $opdef->id, $sigtype, undef, $signalsid);
-        }
-
-        if ($$status)
-        {
-            $$status = sprintf("$$status or %s %s %s-%s", join (', ',@{$values->{ship}}),
-              $values->{type}, $values->{number_serial}, $values->{number_year});
-        } else
-        {
-            $$status = sprintf("Failed to find related OPDEF %s %s %s-%s", join (', ',@{$values->{ship}}),
-              $values->{type}, $values->{number_serial}, $values->{number_year});
-        }
+    }
+    
+    if ($opdef)
+    {
+        $$status = sprintf("Associated signal with OPDEF %s %s %s-%s", $opdef->ship->name,
+          $opdef->type, $opdef->number_serial, $opdef->number_year);
+        return $self->signalStore($signal, $opdef->id, $sigtype, undef, $signalsid);
     }
 
-    $$status = "Failed to find reference to OPDEF" if defined $status && !$$status;
+    if ($$status)
+    {
+        $$status = sprintf("$$status or %s %s %s-%s", $allships,
+          $values->{type}, $values->{number_serial}, $values->{number_year});
+    } else
+    {
+        $$status = sprintf("Failed to find related OPDEF %s %s %s-%s", $allships,
+          $values->{type}, $values->{number_serial}, $values->{number_year});
+    }
     
     0;
 }
@@ -343,14 +369,8 @@ sub signalStore($$;$$$)
 {   my ($self, $content, $opdefs_id, $sigtype, $sitrep, $id) = @_;
 
     # Attempt to get DTG
-    my $dtg;
-    if ($content =~ m/([0-9]{6}.\h[A-Z]{3}\h[0-9]{2})[A-Z^\s]+FM\h/)
-    {
-        my $parser = DateTime::Format::Strptime->new(
-            pattern => '%d%H%MZ %b %y'
-        );
-        $dtg = $parser->parse_datetime($1);
-    }
+    my $dtg = dtgToUnix $1
+        if ($content =~ m/([0-9]{6}.\h[A-Z]{3}\h[0-9]{2})[A-Z^\s]+FM\h/);
 
     my $sigtype_rs = $self->sch->resultset('Sigtype');
     my $s = $sigtype_rs->find($sigtype, { key => 'name' }) if $sigtype;
@@ -376,6 +396,13 @@ sub signalStore($$;$$$)
     $id;
 }
 
+sub dtgToUnix($)
+{
+    my $parser = DateTime::Format::Strptime->new(
+        pattern => '%d%H%MZ %b %y'
+    );
+    $parser->parse_datetime(shift);
+}
 
 sub matdemStore($)
 {   my ($self, $content) = @_;
