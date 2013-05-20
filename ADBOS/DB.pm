@@ -377,7 +377,7 @@ sub signalStore($$;$$$)
     $content =~ s/\r*//g;
     
     # Attempt to get DTG
-    my $dtg = dtgToUnix $1
+    my $dtg = dtgToUnix($1)
         if ($content =~ m/([0-9]{6}.\h[A-Z]{3}\h[0-9]{2})[A-Z^\s]+FM\h/);
 
     my ($orig) = ($content =~ m/^FM\h*([A-Z0-9\h]*)$/mi);
