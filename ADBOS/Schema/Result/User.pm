@@ -1,18 +1,33 @@
+use utf8;
 package ADBOS::Schema::Result::User;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
+
+=head1 NAME
+
+ADBOS::Schema::Result::User
+
+=cut
 
 use strict;
 use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
 __PACKAGE__->load_components("InflateColumn::DateTime");
 
-=head1 NAME
-
-ADBOS::Schema::Result::User
+=head1 TABLE: C<users>
 
 =cut
 
@@ -59,16 +74,19 @@ __PACKAGE__->table("users");
 =head2 created
 
   data_type: 'datetime'
+  datetime_undef_if_invalid: 1
   is_nullable: 1
 
 =head2 pwchanged
 
   data_type: 'datetime'
+  datetime_undef_if_invalid: 1
   is_nullable: 1
 
 =head2 lastlogin
 
   data_type: 'datetime'
+  datetime_undef_if_invalid: 1
   is_nullable: 1
 
 =head2 deleted
@@ -97,14 +115,37 @@ __PACKAGE__->add_columns(
     is_nullable => 1,
   },
   "created",
-  { data_type => "datetime", is_nullable => 1 },
+  {
+    data_type => "datetime",
+    datetime_undef_if_invalid => 1,
+    is_nullable => 1,
+  },
   "pwchanged",
-  { data_type => "datetime", is_nullable => 1 },
+  {
+    data_type => "datetime",
+    datetime_undef_if_invalid => 1,
+    is_nullable => 1,
+  },
   "lastlogin",
-  { data_type => "datetime", is_nullable => 1 },
+  {
+    data_type => "datetime",
+    datetime_undef_if_invalid => 1,
+    is_nullable => 1,
+  },
   "deleted",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
 );
+
+=head1 PRIMARY KEY
+
+=over 4
+
+=item * L</id>
+
+=back
+
+=cut
+
 __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
@@ -125,8 +166,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07000 @ 2013-05-05 10:29:17
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:VP+IncXVzw42jwm/luz10g
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LDfG5CQ8Aez8+gqS+jqIoQ
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

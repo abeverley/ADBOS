@@ -1,18 +1,33 @@
+use utf8;
 package ADBOS::Schema::Result::Signal;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
+
+=head1 NAME
+
+ADBOS::Schema::Result::Signal
+
+=cut
 
 use strict;
 use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
 __PACKAGE__->load_components("InflateColumn::DateTime");
 
-=head1 NAME
-
-ADBOS::Schema::Result::Signal
+=head1 TABLE: C<signals>
 
 =cut
 
@@ -45,7 +60,14 @@ __PACKAGE__->table("signals");
 =head2 dtg
 
   data_type: 'datetime'
+  datetime_undef_if_invalid: 1
   is_nullable: 1
+
+=head2 originator
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 64
 
 =head2 type
 
@@ -71,7 +93,13 @@ __PACKAGE__->add_columns(
   "sitrep",
   { data_type => "smallint", is_nullable => 1 },
   "dtg",
-  { data_type => "datetime", is_nullable => 1 },
+  {
+    data_type => "datetime",
+    datetime_undef_if_invalid => 1,
+    is_nullable => 1,
+  },
+  "originator",
+  { data_type => "varchar", is_nullable => 1, size => 64 },
   "type",
   {
     data_type => "enum",
@@ -81,24 +109,20 @@ __PACKAGE__->add_columns(
   "sigtype",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
 );
-__PACKAGE__->set_primary_key("id");
 
-=head1 RELATIONS
+=head1 PRIMARY KEY
 
-=head2 sigtype
+=over 4
 
-Type: belongs_to
+=item * L</id>
 
-Related object: L<ADBOS::Schema::Result::Sigtype>
+=back
 
 =cut
 
-__PACKAGE__->belongs_to(
-  "sigtype",
-  "ADBOS::Schema::Result::Sigtype",
-  { id => "sigtype" },
-  { join_type => "LEFT", on_delete => "CASCADE", on_update => "CASCADE" },
-);
+__PACKAGE__->set_primary_key("id");
+
+=head1 RELATIONS
 
 =head2 opdef
 
@@ -112,12 +136,37 @@ __PACKAGE__->belongs_to(
   "opdef",
   "ADBOS::Schema::Result::Opdef",
   { id => "opdefs_id" },
-  { join_type => "LEFT", on_delete => "CASCADE", on_update => "CASCADE" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "CASCADE",
+    on_update     => "CASCADE",
+  },
+);
+
+=head2 sigtype
+
+Type: belongs_to
+
+Related object: L<ADBOS::Schema::Result::Sigtype>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "sigtype",
+  "ADBOS::Schema::Result::Sigtype",
+  { id => "sigtype" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "CASCADE",
+    on_update     => "CASCADE",
+  },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07000 @ 2013-05-05 10:29:17
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5/baDny6kAAU3A/r7x1O6g
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:L7YxV0Lg96lIlUYOPOwuOw
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

@@ -1,18 +1,33 @@
+use utf8;
 package ADBOS::Schema::Result::Opdef;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
+
+=head1 NAME
+
+ADBOS::Schema::Result::Opdef
+
+=cut
 
 use strict;
 use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
 __PACKAGE__->load_components("InflateColumn::DateTime");
 
-=head1 NAME
-
-ADBOS::Schema::Result::Opdef
+=head1 TABLE: C<opdefs>
 
 =cut
 
@@ -127,6 +142,7 @@ __PACKAGE__->table("opdefs");
 =head2 modified
 
   data_type: 'datetime'
+  datetime_undef_if_invalid: 1
   is_nullable: 1
 
 =head2 remarks
@@ -143,6 +159,7 @@ __PACKAGE__->table("opdefs");
 =head2 category_changed
 
   data_type: 'datetime'
+  datetime_undef_if_invalid: 1
   is_nullable: 1
 
 =cut
@@ -185,17 +202,76 @@ __PACKAGE__->add_columns(
   "onbrief",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
   "modified",
-  { data_type => "datetime", is_nullable => 1 },
+  {
+    data_type => "datetime",
+    datetime_undef_if_invalid => 1,
+    is_nullable => 1,
+  },
   "remarks",
   { data_type => "text", is_nullable => 1 },
   "category_prev",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "category_changed",
-  { data_type => "datetime", is_nullable => 1 },
+  {
+    data_type => "datetime",
+    datetime_undef_if_invalid => 1,
+    is_nullable => 1,
+  },
 );
+
+=head1 PRIMARY KEY
+
+=over 4
+
+=item * L</id>
+
+=back
+
+=cut
+
 __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
+
+=head2 category
+
+Type: belongs_to
+
+Related object: L<ADBOS::Schema::Result::Category>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "category",
+  "ADBOS::Schema::Result::Category",
+  { id => "category" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "CASCADE",
+    on_update     => "CASCADE",
+  },
+);
+
+=head2 category_prev
+
+Type: belongs_to
+
+Related object: L<ADBOS::Schema::Result::Category>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "category_prev",
+  "ADBOS::Schema::Result::Category",
+  { id => "category_prev" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "CASCADE",
+    on_update     => "CASCADE",
+  },
+);
 
 =head2 comments
 
@@ -212,21 +288,6 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
-=head2 category_prev
-
-Type: belongs_to
-
-Related object: L<ADBOS::Schema::Result::Category>
-
-=cut
-
-__PACKAGE__->belongs_to(
-  "category_prev",
-  "ADBOS::Schema::Result::Category",
-  { id => "category_prev" },
-  { join_type => "LEFT", on_delete => "CASCADE", on_update => "CASCADE" },
-);
-
 =head2 ship
 
 Type: belongs_to
@@ -239,22 +300,12 @@ __PACKAGE__->belongs_to(
   "ship",
   "ADBOS::Schema::Result::Ship",
   { id => "ships_id" },
-  { join_type => "LEFT", on_delete => "CASCADE", on_update => "CASCADE" },
-);
-
-=head2 category
-
-Type: belongs_to
-
-Related object: L<ADBOS::Schema::Result::Category>
-
-=cut
-
-__PACKAGE__->belongs_to(
-  "category",
-  "ADBOS::Schema::Result::Category",
-  { id => "category" },
-  { join_type => "LEFT", on_delete => "CASCADE", on_update => "CASCADE" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "CASCADE",
+    on_update     => "CASCADE",
+  },
 );
 
 =head2 signals
@@ -273,8 +324,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07000 @ 2013-05-06 20:45:34
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:iT0/OQpPxNbU1xQIW8ELcw
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:CWWNWGmaGC6pwH1hxzOhcA
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

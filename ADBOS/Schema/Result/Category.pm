@@ -1,18 +1,33 @@
+use utf8;
 package ADBOS::Schema::Result::Category;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
+
+=head1 NAME
+
+ADBOS::Schema::Result::Category
+
+=cut
 
 use strict;
 use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
 __PACKAGE__->load_components("InflateColumn::DateTime");
 
-=head1 NAME
-
-ADBOS::Schema::Result::Category
+=head1 TABLE: C<category>
 
 =cut
 
@@ -39,25 +54,34 @@ __PACKAGE__->add_columns(
   "name",
   { data_type => "char", is_nullable => 1, size => 2 },
 );
-__PACKAGE__->set_primary_key("id");
-__PACKAGE__->add_unique_constraint("name", ["name"]);
 
-=head1 RELATIONS
+=head1 PRIMARY KEY
 
-=head2 opdefs_category_prevs
+=over 4
 
-Type: has_many
+=item * L</id>
 
-Related object: L<ADBOS::Schema::Result::Opdef>
+=back
 
 =cut
 
-__PACKAGE__->has_many(
-  "opdefs_category_prevs",
-  "ADBOS::Schema::Result::Opdef",
-  { "foreign.category_prev" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
-);
+__PACKAGE__->set_primary_key("id");
+
+=head1 UNIQUE CONSTRAINTS
+
+=head2 C<name>
+
+=over 4
+
+=item * L</name>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint("name", ["name"]);
+
+=head1 RELATIONS
 
 =head2 opdefs_categories
 
@@ -74,9 +98,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 opdefs_category_prevs
 
-# Created by DBIx::Class::Schema::Loader v0.07000 @ 2013-05-06 20:53:52
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:qSxKE0iQjZe80etg7lh4aA
+Type: has_many
+
+Related object: L<ADBOS::Schema::Result::Opdef>
+
+=cut
+
+__PACKAGE__->has_many(
+  "opdefs_category_prevs",
+  "ADBOS::Schema::Result::Opdef",
+  { "foreign.category_prev" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:CDDJdCdC+ekXuD4mvPzb6g
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
