@@ -162,7 +162,8 @@ sub otherFm()
     $message =~ s/\r*//g; # Remove any nasty carriage-returns
  
     if ($message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
-                    (?<type>ME|WE|AR|OP)[-\s]+
+                    \s+(?<type>ME|WE|AR|OP)[-\s]*
+                    (OPDEF\h+)?
                     (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
     {
         $values{ship} = $+{ship};
@@ -185,7 +186,8 @@ sub otherTo()
 
     my %values;
     # First look for OPDEF number
-    if (m!(?<type>ME|WE|AR|OP)[-\s]+ 
+    if (m!\s+(?<type>ME|WE|AR|OP)[-\s]*
+          (OPDEF\h+)?
           (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
     {
         $values{ship} = \@ships;
@@ -199,7 +201,8 @@ sub otherTo()
     # Then look for signal reference
     if (m!BT\n
           (.|\n)*?
-          (?<ship>[A-Z0-9\h]*?)\h
+          \h*
+          (?<ship>[A-Z0-9\h]+?)\h
           ([A-Z0-9]{3}(\h|/))*
           (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
     {
