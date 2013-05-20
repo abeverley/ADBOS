@@ -179,43 +179,46 @@ sub signalProcess($;$$)
 sub signalOther($;$$)
 {
     # Try to process a signal that wasn't parsed
-    my ($self, $signal, $status, $signalsid) = @_;
-    
-    if ($signal =~ m!/NAVOPDEF/!)
+    my ($self, $rawtext, $status, $signalsid) = @_;
+
+    $rawtext =~ s/\r*//g;
+
+    if ($rawtext =~ m!/NAVOPDEF/!)
     {
         $$status = "Found phrase /NAVOPDEF/. Not going to try and parse as other signal.";
         return 0;
     }
 
     # See if signal is a MATDEM. More restrictive search than the next block
-    my $sigtype = 'MATDEM' if $signal =~ /^(\h|subject:|subj:|opdef)+\h*matdem/im;
+    my $sigtype = 'MATDEM'
+        if ($rawtext =~ /^(\h|subject:|subj:|opdef|non-patt)+\h*matdem/im);
     
     # Create a search based on all searchable signal types
     my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
     my @search;
     push @search, $_->name for @sigtypes;
     my $s = join '|', @search;
-    $sigtype = $1 if ($signal =~ /($s)/);
+    $sigtype = $1 if ($rawtext =~ /($s)/);
 
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $parser = ADBOS::Parse->new();
 
     # First try signal sender and OPDEF ID
-    if (my $values = $parser->otherFm($signal))
+    if (my $values = $parser->otherFm($rawtext))
     {
         my ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
                                           number_serial => $values->{number_serial},
                                           type          => $values->{type},
                                           'ship.name'   => $values->{ship}
                                          } , { join => 'ship' } );
-        return $self->signalStore($signal, $opdef->id, $sigtype, undef, $signalsid) if $opdef;
+        return $self->signalStore($rawtext, $opdef->id, $sigtype, undef, $signalsid) if $opdef;
 
         $$status = sprintf("Failed to find related OPDEF %s %s %s-%s", $values->{ship},
           $values->{type}, $values->{number_serial}, $values->{number_year});
     }
 
     # See what we can glean from the action addressees
-    my $values = $parser->otherTo($signal);
+    my $values = $parser->otherTo($rawtext);
 
     if (!$values) {
         $$status = "Failed to find reference to OPDEF" if defined $status;
@@ -261,7 +264,7 @@ sub signalOther($;$$)
     {
         $$status = sprintf("Associated signal with OPDEF %s %s %s-%s", $opdef->ship->name,
           $opdef->type, $opdef->number_serial, $opdef->number_year);
-        return $self->signalStore($signal, $opdef->id, $sigtype, undef, $signalsid);
+        return $self->signalStore($rawtext, $opdef->id, $sigtype, undef, $signalsid);
     }
 
     if ($$status)
