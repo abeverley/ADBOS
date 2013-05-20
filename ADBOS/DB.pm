@@ -203,18 +203,19 @@ sub signalOther($;$$)
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $parser = ADBOS::Parse->new();
 
+    my $opdef; # Used for associated OPDEF if found
+
     # First try signal sender and OPDEF ID
     if (my $values = $parser->otherFm($rawtext))
     {
-        my ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
+        ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
                                           number_serial => $values->{number_serial},
                                           type          => $values->{type},
                                           'ship.name'   => $values->{ship}
                                          } , { join => 'ship' } );
-        return $self->signalStore($rawtext, $opdef->id, $sigtype, undef, $signalsid) if $opdef;
 
-        $$status = sprintf("Failed to find related OPDEF %s %s %s-%s", $values->{ship},
-          $values->{type}, $values->{number_serial}, $values->{number_year});
+        $opdef or $$status = sprintf("Failed to find related OPDEF %s %s %s-%s. ", $values->{ship},
+            $values->{type}, $values->{number_serial}, $values->{number_year});
     }
 
     # See what we can glean from the action addressees
@@ -225,10 +226,9 @@ sub signalOther($;$$)
         return 0;
     }
 
-    my $opdef;
     my $allships = join ', ', @{$values->{ship}};
 
-    if ($values->{dtg})
+    if (!$opdef && $values->{dtg})
     {
         # We've only got a DTG to go on...
         my $dtg = dtgToUnix ($values->{dtg});
@@ -241,12 +241,15 @@ sub signalOther($;$$)
                                              } , { join => { opdef => 'ship' } }
                                             );
             if ($signal) { $opdef = $signal->opdef; last }
-            $$status = sprintf("Failed to find any associated OPDEF for DTG %s for ship(s) %s",
-                $values->{dtg}, $allships);
         }
-        $signal || return 0;
+        if (!$opdef)
+        {
+            $$status .= sprintf("Failed to find any associated OPDEF for DTG %s for ship(s) %s. ",
+                $values->{dtg}, $allships);
+            return 0;
+        }
     }
-    else
+    elsif (!$opdef)
     {
         # Easy, we've got an OPDEF number to search for
         foreach my $ship (@{$values->{ship}})
@@ -258,6 +261,11 @@ sub signalOther($;$$)
                                           } , { join => 'ship' } );
             last if $opdef;
         }
+        if (!$opdef)
+        {
+            $$status .= sprintf("Failed to find related OPDEF %s %s %s-%s. ", $allships,
+              $values->{type}, $values->{number_serial}, $values->{number_year});
+        }
     }
     
     if ($opdef)
@@ -267,16 +275,6 @@ sub signalOther($;$$)
         return $self->signalStore($rawtext, $opdef->id, $sigtype, undef, $signalsid);
     }
 
-    if ($$status)
-    {
-        $$status = sprintf("$$status or %s %s %s-%s", $allships,
-          $values->{type}, $values->{number_serial}, $values->{number_year});
-    } else
-    {
-        $$status = sprintf("Failed to find related OPDEF %s %s %s-%s", $allships,
-          $values->{type}, $values->{number_serial}, $values->{number_year});
-    }
-    
     0;
 }
 
