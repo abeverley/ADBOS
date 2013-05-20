@@ -371,16 +371,19 @@ sub opdefStore($$)
 sub signalStore($$;$$$)
 {   my ($self, $content, $opdefs_id, $sigtype, $sitrep, $id) = @_;
 
+    $content =~ s/\r*//g;
+    
     # Attempt to get DTG
     my $dtg = dtgToUnix $1
         if ($content =~ m/([0-9]{6}.\h[A-Z]{3}\h[0-9]{2})[A-Z^\s]+FM\h/);
+
+    my ($orig) = ($content =~ m/^FM\h*([A-Z0-9\h]*)$/mi);
 
     my $sigtype_rs = $self->sch->resultset('Sigtype');
     my $s = $sigtype_rs->find($sigtype, { key => 'name' }) if $sigtype;
     my $ss = $s->id if $s;
     
-    my $data = { content => $content, opdefs_id => $opdefs_id, sigtype => $ss, sitrep => $sitrep, dtg => $dtg };
-    #my %data = ( content => $content, opdefs_id => $opdefs_id, sitrep => $sitrep, dtg => $dtg );
+    my $data = { content => $content, opdefs_id => $opdefs_id, sigtype => $ss, sitrep => $sitrep, dtg => $dtg, originator => $orig };
     my $signal_rs = $self->sch->resultset('Signal');
 
     if ($id)
