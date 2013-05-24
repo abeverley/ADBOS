@@ -40,7 +40,7 @@ sub parse()
     $values{dtg} = $+{dtg};
 
     if ($message =~ m% [.\n]*?
-                       \n.*OPDEF\h*/?\h*    (?<type>ME|WE|AR|OP)[\h/]*0*
+                       \n.*(OPDEF|DEFREP)\h*/?\h*    (?<type>ME|WE|AR|OP)[\h/]*0*
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -81,7 +81,7 @@ sub parse()
         \%values;   
     }
     elsif ($message =~ m% [.\n]*?
-                       \n.*OPDEF\h*/?\h*     (?<type>ME|WE|AR|OP)[\h/]*  # OPDEF number
+                       \n.*(OPDEF|DEFREP)\h*/?\h*     (?<type>ME|WE|AR|OP)[\h/]*  # OPDEF number
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -121,7 +121,7 @@ sub parse()
         \%values;   
     }
     elsif ($message =~ m% [.\n]*?
-                         OPDEF\h*/?[-\hA-Z]*?    (?<type>ME|WE|AR|OP)[\h/]*      # OPDEF number
+                         (OPDEF|DEFREP)\h*/?[-\hA-Z]*?    (?<type>ME|WE|AR|OP)[\h/]*      # OPDEF number
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -163,7 +163,7 @@ sub otherFm()
  
     if ($message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
                     \s+(?<type>ME|WE|AR|OP)[-\s]*
-                    (OPDEF\h+)?
+                    ((OPDEF|DEFREP)\h+)?
                     (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
     {
         $values{ship} = $+{ship};
@@ -187,7 +187,7 @@ sub otherTo()
     my %values;
     # First look for OPDEF number
     if (m!\s+(?<type>ME|WE|AR|OP)[-\s]*
-          (OPDEF\h+)?
+          ((OPDEF|DEFREP)\h+)?
           (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
     {
         $values{ship} = \@ships;
