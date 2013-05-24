@@ -216,6 +216,7 @@ sub otherTo()
           ([A-Z0-9]{3}(\h|/))*
           (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
     {
+        $+{ship} !~ /^\h+$/ || return; # Ship could be only white space
         $values{ship} = [ $+{ship} ];
         $values{dtg} = $+{dtg};
         return \%values;
