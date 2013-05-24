@@ -25,5 +25,3 @@ a2enmod apreq
 
 Copy and enable opdef apache config into sites-available
 Update Apache mime.conf
-
-test
