@@ -209,6 +209,17 @@ sub otherTo()
         return \%values;
     }
 
+    # Try for MY reference
+    if (m!FM\h(?<ship>[\hA-Z0-9]+)
+          (.|\n)*?
+          (MY).*
+          (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
+    {
+        $values{ship} = [ $+{ship} ];
+        $values{dtg} = $+{dtg};
+        return \%values;
+    }
+
     if (m!BT\n
           (.|\n)*?
           \h*
