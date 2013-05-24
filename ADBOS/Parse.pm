@@ -206,12 +206,17 @@ sub otherTo()
           ([A-Z0-9]{3}(\h|/))*
           (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
     {
-        if ($+{ship} eq 'YR' || $+{ship} eq 'YOUR')
-        {
-            $values{ship} = \@ships;
-        } else {
-            $values{ship} = [ $+{ship} ];
-        }
+        $values{ship} = [ $+{ship} ];
+        $values{dtg} = $+{dtg};
+        return \%values;
+    }
+
+    if (m!BT\n
+          (.|\n)*?
+          (YOUR|YR).*
+          (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
+    {
+        $values{ship} = \@ships;
         $values{dtg} = $+{dtg};
         return \%values;
     }
