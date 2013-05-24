@@ -201,6 +201,16 @@ sub otherTo()
     # Then look for signal reference
     if (m!BT\n
           (.|\n)*?
+          (YOUR|YR).*
+          (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
+    {
+        $values{ship} = \@ships;
+        $values{dtg} = $+{dtg};
+        return \%values;
+    }
+
+    if (m!BT\n
+          (.|\n)*?
           \h*
           (?<ship>[A-Z0-9\h]+?)\h
           ([A-Z0-9]{3}(\h|/))*
@@ -211,15 +221,6 @@ sub otherTo()
         return \%values;
     }
 
-    if (m!BT\n
-          (.|\n)*?
-          (YOUR|YR).*
-          (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
-    {
-        $values{ship} = \@ships;
-        $values{dtg} = $+{dtg};
-        return \%values;
-    }
 }
 
 1;
