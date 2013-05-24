@@ -164,7 +164,12 @@ sub otherFm()
     if ($message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
                     \s+(?<type>ME|WE|AR|OP)[-\s]*
                     ((OPDEF|DEFREP)\h+)?
-                    (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
+                    (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix
+                    ||
+        $message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
+                    ((OPDEF|DEFREP)\h+)?
+                    (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)
+                    \s+(?<type>ME|WE|AR|OP)[-\s]+!ix)
     {
         $values{ship} = $+{ship};
         $values{type} = $+{type};
@@ -188,7 +193,11 @@ sub otherTo()
     # First look for OPDEF number
     if (m!\s+(?<type>ME|WE|AR|OP)[-\s]*
           ((OPDEF|DEFREP)\h+)?
-          (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
+          (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix
+          ||
+        m!((OPDEF|DEFREP)\h+)?
+          (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)
+          \s+(?<type>ME|WE|AR|OP)[-\s]+!ix)
     {
         $values{ship} = \@ships;
         $values{type} = $+{type};
