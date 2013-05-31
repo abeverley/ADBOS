@@ -42,7 +42,7 @@ sub connect()
     my $dbname = $self->{SB_name};
 
     $self->{sch} = ADBOS::Schema->connect(
-      "dbi:mysql:database=$dbname", $self->{SB_user}, $self->{SB_pass}
+      "dbi:mysql:database=$dbname;host=adbosdb", $self->{SB_user}, $self->{SB_pass}
      , {RaiseError => 1, AutoCommit => 1, mysql_enable_utf8 => 1}
     ) or error __x"unable to connect to database {name}: {err}"
            , name => $dbname, err => $DBI::errstr;
@@ -182,10 +182,10 @@ sub signalOther($;$$)
     my ($self, $rawtext, $status, $signalsid) = @_;
 
     $rawtext =~ s/\r*//g;
-
-    if ($rawtext =~ m!/NAVOPDEF/!)
+        
+    if ($rawtext =~ m!/(NAVOPDEF|NAVDEFREP)/!)
     {
-        $$status = "Found phrase /NAVOPDEF/. Not going to try and parse as other signal.";
+        $$status = "Found phrase /NAVOPDEF/ or /NAVDEFREP/. Not going to try and parse as other signal.";
         return 0;
     }
 
@@ -233,10 +233,17 @@ sub signalOther($;$$)
         # We've only got a DTG to go on...
         my $dtg = dtgToUnix ($values->{dtg});
         my $signal_rs = $self->sch->resultset('Signal');
-
         foreach my $ship (@{$values->{ship}})
         {
+            # Search for DTG and originator first
             my ($signal) = $signal_rs->search({ dtg => $dtg,
+                                                originator => $ship
+                                             } );
+            if ($signal) { $opdef = $signal->opdef; last }
+
+            # Then search for OPDEF ship.
+            # XXXX This can be removed once the DB is better populated
+            ($signal) = $signal_rs->search({ dtg => $dtg,
                                                'ship.name'   => $ship
                                              } , { join => { opdef => 'ship' } }
                                             );

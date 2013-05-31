@@ -40,7 +40,7 @@ sub parse()
     $values{dtg} = $+{dtg};
 
     if ($message =~ m% [.\n]*?
-                       \n.*OPDEF\h*/?\h*    (?<type>ME|WE|AR|OP)[\h/]*0*
+                       \n.*(OPDEF|DEFREP)\h*/?\h*    (?<type>ME|WE|AR|OP)[\h/]*0*
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -81,7 +81,7 @@ sub parse()
         \%values;   
     }
     elsif ($message =~ m% [.\n]*?
-                       \n.*OPDEF\h*/?\h*     (?<type>ME|WE|AR|OP)[\h/]*  # OPDEF number
+                       \n.*(OPDEF|DEFREP)\h*/?\h*     (?<type>ME|WE|AR|OP)[\h/]*  # OPDEF number
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -121,7 +121,7 @@ sub parse()
         \%values;   
     }
     elsif ($message =~ m% [.\n]*?
-                         OPDEF\h*/?[-\hA-Z]*?    (?<type>ME|WE|AR|OP)[\h/]*      # OPDEF number
+                         (OPDEF|DEFREP)\h*/?[-\hA-Z]*?    (?<type>ME|WE|AR|OP)[\h/]*      # OPDEF number
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -163,8 +163,13 @@ sub otherFm()
  
     if ($message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
                     \s+(?<type>ME|WE|AR|OP)[-\s]*
-                    (OPDEF\h+)?
-                    (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
+                    ((OPDEF|DEFREP)\h+)?
+                    (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix
+                    ||
+        $message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
+                    ((OPDEF|DEFREP)\h+)?
+                    (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)
+                    \s+(?<type>ME|WE|AR|OP)[-\s]+!ix)
     {
         $values{ship} = $+{ship};
         $values{type} = $+{type};
@@ -187,8 +192,12 @@ sub otherTo()
     my %values;
     # First look for OPDEF number
     if (m!\s+(?<type>ME|WE|AR|OP)[-\s]*
-          (OPDEF\h+)?
-          (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix)
+          ((OPDEF|DEFREP)\h+)?
+          (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix
+          ||
+        m!((OPDEF|DEFREP)\h+)?
+          (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)
+          \s+(?<type>ME|WE|AR|OP)[-\s]+!ix)
     {
         $values{ship} = \@ships;
         $values{type} = $+{type};
@@ -201,20 +210,38 @@ sub otherTo()
     # Then look for signal reference
     if (m!BT\n
           (.|\n)*?
+          (YOUR|YR).*
+          (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
+    {
+        $values{ship} = \@ships;
+        $values{dtg} = $+{dtg};
+        return \%values;
+    }
+
+    # Try for MY reference
+    if (m!FM\h(?<ship>[\hA-Z0-9]+)
+          (.|\n)*?
+          (MY).*
+          (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
+    {
+        $values{ship} = [ $+{ship} ];
+        $values{dtg} = $+{dtg};
+        return \%values;
+    }
+
+    if (m!BT\n
+          (.|\n)*?
           \h*
           (?<ship>[A-Z0-9\h]+?)\h
           ([A-Z0-9]{3}(\h|/))*
           (?<dtg>[0-9]{6}.\h[A-Z]{3}\h[0-9]{2})!ix)
     {
-        if ($+{ship} eq 'YR' || $+{ship} eq 'YOUR')
-        {
-            $values{ship} = \@ships;
-        } else {
-            $values{ship} = [ $+{ship} ];
-        }
+        $+{ship} !~ /^\h+$/ || return; # Ship could be only white space
+        $values{ship} = [ $+{ship} ];
         $values{dtg} = $+{dtg};
         return \%values;
     }
+
 }
 
 1;
