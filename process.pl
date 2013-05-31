@@ -43,24 +43,21 @@ while (1) {
 sub process($;$)
 {
     my ($message,$f) = @_;
-#    if ($message !~ /OPDEF/ || $message =~ /MATDEM|AVICOS|NAAIHTO|EQUIPREC|EQUIPSENT/)
-#    {
-#        print "Ignoring MATDEM\n";
-#                $db->matdemStore($message);
-#        return;
-#    }
 
     print "Attempting to parse message ";
     print "for file $f..." if $f;
     print "\n";
-    if (my $values =  $parser->parse($message))
+    if ($message =~ /^CHANNEL CHECK$/m)
+    { # Ignore for the moment
+      # XXXX Log in DB in future
+    }
+    elsif (my $values =  $parser->parse($message))
     {
         my $status;
         $db->signalProcess($values, \$status);
         print "$status\n";
     } elsif ($db->signalOther($message)) {
         print "Parsed signal as an associated signal\n";
-        
     } else {
         $db->signalStore($message);
         print STDERR "Parse failed\n";
