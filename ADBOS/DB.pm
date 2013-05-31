@@ -187,15 +187,15 @@ sub signalOther($;$$)
 
     # See if signal is a MATDEM. More restrictive search than the next block
     my $sigtype = null;
-    $sigtype = 'MATDEM'
-        if ($rawtext =~ /^(\h|subject|subj|opdef|non-patt)+\h*matdem\h*((?!CANCELLATION).)*$/im);
+#    $sigtype = 'MATDEM'
+#        if ($rawtext =~ /^(\h|subject|subj|opdef|non-patt)+\h*matdem\h*((?!CANCELLATION).)*$/im);
     
     # Create a search based on all searchable signal types
     my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
     my @search;
     push @search, $_->name for @sigtypes;
     my $s = join '|', @search;
-    $sigtype = $1 if ($rawtext =~ /($s)/);
+    $sigtype = $1 if ($rawtext =~ /^(\h|subject|subj|opdef|non-patt)+\h*($s)\h*((?!CANCELLATION).)*$/im);
 
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $parser = ADBOS::Parse->new();
