@@ -58,7 +58,7 @@ sub parse()
                        (\n(\^|\h)*9\h*\.?\h*       (?<assistance_port>(.|\n)*?))?                            # Where assistance
                        (\n(\^|\h)*10\h*\.?\h*      (?<matdem>.*?))?                                     # MATDEM
                        \s*\^?(FFFF)?
-                       \n\^?(RMKS|1\.)/?(?<remarks>(.|\n)*)
+                       \n\^?(RMKS|1[A-Z]?\.)/?(?<remarks>(.|\n)*)
                     %ix)
     {
         $values{format} = 'SITREP';
@@ -98,7 +98,7 @@ sub parse()
                        (\n(\^|\h)*9\h*\.?\h*    (?<assistance_port>(.|\n)*?))?                              # Where assistance
                        (\n(\^|\h)*10\h*\.?\h*   (?<matdem>.*?))?                                       # MATDEM
                        \s*\^?(FFFF)?
-                       \s+\^?(RMKS|1\.)/?(?<remarks>(.|\n)*)
+                       \s+\^?(RMKS|1[A-Z]?\.)/?(?<remarks>(.|\n)*)
                     %ix)
     {
         $values{format} = 'OPDEF';
