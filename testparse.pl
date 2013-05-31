@@ -9,7 +9,6 @@ use ADBOS::DB;
 use Data::Dumper;
 
 my $parser = ADBOS::Parse->new();
-my $db     = ADBOS::DB->new();
 
 my $message = do { local $/; <STDIN> };
 

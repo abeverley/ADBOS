@@ -5,12 +5,15 @@ use warnings;
 
 use ADBOS::DB;
 use ADBOS::Parse;
+use ADBOS::Config;
 use File::Slurp;
 
 sub process($;$);
 
+my $config = simple_config;
+
 my $parser = ADBOS::Parse->new();
-my $db     = ADBOS::DB->new();
+my $db     = ADBOS::DB->new($config);
 
 # See if text is being piped in. If so, read it
 if (not -t STDIN and my $message = do { local $/; <STDIN> })

@@ -7,6 +7,7 @@ use Template;
 
 use ADBOS::DB;
 use ADBOS::Parse;
+use ADBOS::Config;
 
 =pod
 
@@ -23,7 +24,8 @@ OPTIONS:
 
 =cut
 
-my $db    = ADBOS::DB->new;
+my $config = simple_config;
+my $db    = ADBOS::DB->new($config);
 
 sub new($$)
 {   my ($class, $q) = @_;

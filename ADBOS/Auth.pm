@@ -7,6 +7,7 @@ use Apache::Session::File;
 use CGI::Cookie;
 use ADBOS::Display;
 use ADBOS::DB;
+use ADBOS::Config;
 use Crypt::SaltedHash;
 use String::Random;
 use DateTime;
@@ -48,7 +49,8 @@ sub login()
     my $message;
     if($q->body('login')) # Only POST requests
     {
-        my $db = ADBOS::DB->new;
+        my $config = simple_config;
+        my $db = ADBOS::DB->new($config);
         my $user = $db->userGet({ username => $q->param('username') });
         if ($user && Crypt::SaltedHash->validate($user->password, $q->param('password')))
         {

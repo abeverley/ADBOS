@@ -24,25 +24,21 @@ OPTIONS:
 =cut
 
 sub new($%)
-{   my ($class, $global_config, %args) = @_;
-#    $config  = $global_config || {};
+{   my ($class, $config) = @_;
     my $self = bless {}, $class;
-#    my ($dbname, $dbuser, $dbpass) = @{$config}{qw/DBNAME DBUSER DBPASS/};
-#    $self->{SB_name} = $args{name}     || $config->{DBNAME};
-#    $self->{SB_user} = $args{user}     || $config->{DBUSER};
-#    $self->{SB_pass} = $args{password} || $config->{DBPASS};
-    $self->{SB_name} = 'opdef';
-    $self->{SB_user} = 'opdef';
-    $self->{SB_pass} = 'cunteryun';
+    $self->{dbhost} = $config->{dbhost} or die 'Need dbhost';
+    $self->{dbname} = $config->{dbname} or die 'Need dbname';
+    $self->{dbuser} = $config->{dbuser} or die 'Need dbuser';
+    $self->{dbpass} = $config->{dbpass} or die 'Need dbpass';
     $self;
 }
 
 sub connect()
 {   my $self   = shift;
-    my $dbname = $self->{SB_name};
+    my $dbname = $self->{dbname};
 
     $self->{sch} = ADBOS::Schema->connect(
-      "dbi:mysql:database=$dbname;host=adbosdb", $self->{SB_user}, $self->{SB_pass}
+      "dbi:mysql:database=$dbname;host=".$self->{dbhost}, $self->{dbuser}, $self->{dbpass}
      , {RaiseError => 1, AutoCommit => 1, mysql_enable_utf8 => 1}
     ) or error __x"unable to connect to database {name}: {err}"
            , name => $dbname, err => $DBI::errstr;
