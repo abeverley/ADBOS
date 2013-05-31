@@ -47,6 +47,12 @@ __PACKAGE__->table("opdefs");
   is_nullable: 1
   size: 2
 
+=head2 defrep
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 1
+
 =head2 number
 
   data_type: 'varchar'
@@ -169,6 +175,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
   "type",
   { data_type => "char", is_nullable => 1, size => 2 },
+  "defrep",
+  { data_type => "tinyint", default_value => 0, is_nullable => 1 },
   "number",
   { data_type => "varchar", is_nullable => 1, size => 16 },
   "number_serial",
@@ -324,8 +332,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:CWWNWGmaGC6pwH1hxzOhcA
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-31 15:01:55
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:lcyBZ5Q8GONdZ68ikXpOtA
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
