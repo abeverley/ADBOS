@@ -186,7 +186,8 @@ sub signalOther($;$$)
     }
 
     # See if signal is a MATDEM. More restrictive search than the next block
-    my $sigtype = 'MATDEM'
+    my $sigtype = null;
+    $sigtype = 'MATDEM'
         if ($rawtext =~ /^(\h|subject|subj|opdef|non-patt)+\h*matdem\h*((?!CANCELLATION).)*$/im);
     
     # Create a search based on all searchable signal types
