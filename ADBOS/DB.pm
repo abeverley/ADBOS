@@ -191,7 +191,7 @@ sub signalOther($;$$)
 
     # See if signal is a MATDEM. More restrictive search than the next block
     my $sigtype = 'MATDEM'
-        if ($rawtext =~ /^(\h|subject:|subj:|opdef|non-patt)+\h*matdem/im);
+        if ($rawtext =~ /^(\h|subject|subj|opdef|non-patt)+\h*matdem\h*((?!CANCELLATION).)*$/im);
     
     # Create a search based on all searchable signal types
     my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
