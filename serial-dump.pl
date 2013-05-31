@@ -38,20 +38,10 @@ while (1) {
         $chars+=$count;
         $buffer.=$saw;
 
-#        print "XXXX\n$saw\nXXXX\n";
-        # Check here to see if what we want is in the $buffer
-        # say "last" if we find it
-#        if (0)
         print "DATA RX:\n";
         if ($buffer =~ /\RNNNN/)
         {
             (my $message, $buffer) = split /\RNNNN/, $buffer;
-#            if ($message !~ /OPDEF/ || $message =~ /MATDEM|AVICOS|NAAIHTO|EQUIPREC|EQUIPSENT/)
-#            {
-#                print "Ignoring MATDEM\n";
-#                $db->matdemStore($message);
-#                next;
-#            }
             print "MESSAGE FOUND\n";
             $message =~ s/\r\n/\n/g;
             $message =~ s/(\n|.)*VZCZC//g;
