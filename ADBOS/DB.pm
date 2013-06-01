@@ -187,10 +187,22 @@ sub signalOther($;$$)
 
     # Create a search based on all searchable signal types
     my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
-    my @search;
-    push @search, $_->name for @sigtypes;
+    my ($sigtype, @search);
+
+    for (@sigtypes) {
+        if ($_->regex)
+        {
+            my $s = $_->regex;
+            $sigtype = $1 if ($rawtext =~ /$s/im);
+        }
+        else {
+            push @search, $_->name unless $_->regex;
+        }
+    }
+
     my $s = join '|', @search;
-    my $sigtype = $2 if ($rawtext =~ /^(\h|subject|subj|opdef|non-patt)+\h*($s)\h*((?!CANCELLATION).)*$/im);
+    $sigtype = $1 if ($rawtext =~ /^(?:subject|subj)?[:\h]*($s)$/im)
+        && !$sigtype;
 
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $parser = ADBOS::Parse->new();

@@ -52,6 +52,12 @@ __PACKAGE__->table("sigtype");
   default_value: 0
   is_nullable: 0
 
+=head2 regex
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 128
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -61,6 +67,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 32 },
   "search",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "regex",
+  { data_type => "varchar", is_nullable => 1, size => 128 },
 );
 
 =head1 PRIMARY KEY
@@ -107,8 +115,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:AdWmsD14zrWFb79JVGoqug
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-01 18:38:17
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:t99/35iP+HkmDAo1UONn2A
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
