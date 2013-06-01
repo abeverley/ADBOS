@@ -1,6 +1,6 @@
 #!/bin/bash
 
 cp -a ADBOS/* /usr/local/share/perl/5.10.1/ADBOS/
-cp process.pl /usr/local/opdef/
-cp serial-dump.pl /usr/local/opdef/
-cp testparse.pl /usr/local/opdef/
+install -m 755 process.pl /usr/local/opdef/
+install -m 755 serial-dump.pl /usr/local/opdef/
+install -m 755 testparse.pl /usr/local/opdef/
