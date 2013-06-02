@@ -45,7 +45,7 @@ sub parse()
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
                                             .*?      # OPDEF number
-                                             \h*SITREP\h*(?<sitrep>[0-9A-Z]*)\.?                    # SITREP number
+                                             \h*(SITREP|SIT)\h*(?<sitrep>[0-9A-Z]*)\.?                    # SITREP number
                          \n?.*\n?.*                                                                 # Allow 2 lines of nonsense
                        \n\h*\^?[AMPN/\.\h]{0,8}1\.?.*        (?<category>A1|A2|A3|A4|B1|b2|B3|B4|C1|C2|C3|C4).*?  # Category
                        \n(\^|\h)*2\h*\.?\h*        (?<erg_code>.*?)\.?                                      # ERG code
