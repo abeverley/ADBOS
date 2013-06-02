@@ -1,6 +1,8 @@
 #!/bin/bash
 
-cp -a ADBOS/* /usr/local/share/perl/5.10.1/ADBOS/
+install -m 644 ADBOS/* /usr/local/share/perl/5.10.1/ADBOS/
+mkdir -p /usr/local/share/perl/5.10.1/ADBOS/Schema/Result
+install -m 644 ADBOS/Schema/Result/* /usr/local/share/perl/5.10.1/ADBOS/Schema/Result
 cp *.css /var/www/opdef.andybev.com/
 cp syops.html /var/www/opdef.andybev.com/
 cp images/* /var/www/opdef.andybev.com/images/
