@@ -50,6 +50,10 @@ sub process($;$)
     print "Attempting to parse message ";
     print "for file $f..." if $f;
     print "\n";
+
+    # Clean up extra line breaks
+    $message =~ s/\r*//g;
+    
     if ($message =~ /^CHANNEL CHECK$/m)
     { # Ignore for the moment
       # XXXX Log in DB in future

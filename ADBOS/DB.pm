@@ -177,8 +177,6 @@ sub signalOther($;$$)
     # Try to process a signal that wasn't parsed
     my ($self, $rawtext, $status, $signalsid) = @_;
 
-    $rawtext =~ s/\r*//g;
-        
     if ($rawtext =~ m!/(NAVOPDEF|NAVDEFREP)/!)
     {
         $$status = "Found phrase /NAVOPDEF/ or /NAVDEFREP/. Not going to try and parse as other signal.";
@@ -383,8 +381,6 @@ sub opdefStore($$)
 sub signalStore($$;$$$)
 {   my ($self, $content, $opdefs_id, $sigtype, $sitrep, $id) = @_;
 
-    $content =~ s/\r*//g;
-    
     # Attempt to get DTG
     my $dtg = dtgToUnix($1)
         if ($content =~ m/([0-9]{6}.\h[A-Z]{3}\h[0-9]{2})[A-Z^\s]+FM\h/);
