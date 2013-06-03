@@ -183,25 +183,8 @@ sub signalOther($;$$)
         return 0;
     }
 
-    # Create a search based on all searchable signal types
-    my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
-    my ($sigtype, @search);
-
-    for (@sigtypes) {
-        if ($_->regex)
-        {
-            my $s = $_->regex;
-            $sigtype = $1 if ($rawtext =~ /$s/im);
-        }
-        else {
-            push @search, $_->name unless $_->regex;
-        }
-    }
-
-    my $s = join '|', @search;
-    $sigtype = $1 if ($rawtext =~ /^(?:subject|subj)+.*?($s)/im || $rawtext =~ /^($s)$/im)
-        && !$sigtype;
-
+    my $sigtype = $self->sigtypeSearch($rawtext);
+    
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $parser = ADBOS::Parse->new();
 
@@ -287,6 +270,31 @@ sub signalOther($;$$)
     0;
 }
 
+sub sigtypeSearch($)
+{
+    my ($self, $rawtext) = @_;
+
+    # Create a search based on all searchable signal types
+    my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
+    my ($sigtype, @search);
+
+    for (@sigtypes) {
+        if ($_->regex)
+        {
+            # Use unqiue regex if specified
+            my $s = $_->regex;
+            $sigtype = $1 if ($rawtext =~ /$s/im);
+        }
+        else {
+            push @search, $_->name unless $_->regex;
+        }
+    }
+
+    my $s = join '|', @search;
+    $sigtype = $1 if ($rawtext =~ /^(?:subject|subj)+.*?($s)/im || $rawtext =~ /^($s)$/im)
+        && !$sigtype;
+    $sigtype;
+}
 
 sub opdefStore($$)
 {   my ($self, $opdefin, $ships_id) = @_;
