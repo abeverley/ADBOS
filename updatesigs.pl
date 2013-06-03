@@ -26,7 +26,7 @@ for my $sig (@signals)
     if (my $sigtype = $db->sigtypeSearch($text))
     {
         printf("Updating signal type to %s for signal ID %s\n", $sigtype, $sig->id);
-        my $sigtype_rs = $sch->resultset('Sigtype');
+        my $sigtype_rs = $db->sch->resultset('Sigtype');
         my $type = $sigtype_rs->find($sigtype, { key => 'name' }) if $sigtype;
         $sig->update({ sigtype => $type->id });
     }        
