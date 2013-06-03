@@ -236,8 +236,8 @@ sub signalOther($;$$)
         }
         if (!$opdef)
         {
-            $$status .= sprintf("Failed to find any associated OPDEF for DTG %s for ship(s) %s. ",
-                $values->{dtg}, $allships);
+            $$status .= sprintf(qq!Failed to find signal from SMA(s) "%s" with DTG %s.!,
+                $allships, $values->{dtg});
             return 0;
         }
     }
