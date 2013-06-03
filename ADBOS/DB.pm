@@ -199,7 +199,7 @@ sub signalOther($;$$)
     }
 
     my $s = join '|', @search;
-    $sigtype = $1 if ($rawtext =~ /^(?:subject|subj)?[:\h]*($s)$/im)
+    $sigtype = $1 if ($rawtext =~ /^(?:subject|subj)+.*($s)/im || $rawtext =~ /^($s)$/im)
         && !$sigtype;
 
     my $opdef_rs = $self->sch->resultset('Opdef');
