@@ -275,7 +275,7 @@ sub sigtypeSearch($)
     my ($self, $rawtext) = @_;
 
     # Create a search based on all searchable signal types
-    my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1})->all;
+    my @sigtypes = $self->sch->resultset('Sigtype')->search({search=>1}, { order_by => { '-asc' =>  [ 'me.id' ] }})->all;
     my ($sigtype, @search);
 
     for (@sigtypes) {
