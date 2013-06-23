@@ -435,6 +435,12 @@ sub matdemStore($)
 sub userCreate($)
 {   my ($self, $user) = @_;
     my $user_rs = $self->sch->resultset('User');
+
+    return unless $user->{username} && $user->{email};
+    return
+        if $user_rs->search({ username => $user->{username} }); # Username exists
+    return
+        if $user_rs->search({ email => $user->{email} }); # Email exists
     $user_rs->create( $user )->id;
 }
 
