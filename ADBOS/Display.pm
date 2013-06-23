@@ -240,7 +240,6 @@ sub main($)
 sub users($$;$)
 {   my ($self,$user,$auth,$userview) = @_;
 
-    my $db = ADBOS::DB->new;
     my $q = $self->{qry};
     my @errors; my $success; my $action; my $nuser;
     my $title = 'View all users';
@@ -347,7 +346,6 @@ sub users($$;$)
 sub tasks($$;$)
 {   my ($self,$user,$auth,$taskview) = @_;
 
-    my $db = ADBOS::DB->new;
     my $q = $self->{qry};
 
     $db->taskNew($q->param('name'))
@@ -374,7 +372,6 @@ sub tasks($$;$)
 sub resetpw($$)
 {   my ($self,$user,$auth) = @_;
 
-    my $db = ADBOS::DB->new;
     my $q = $self->{qry};
 
     my ($success, $error, $message);

@@ -86,14 +86,16 @@ sub create($)
     $crypt->add($pw);
     $user->{password} = $crypt->generate;
     
-    my $db = ADBOS::DB->new;
+    my $config = simple_config;
+    my $db = ADBOS::DB->new($config);   
     return $pw if $db->userCreate($user);
     0;
 }
 
 sub delete($)
 {   my ($self, $user) = @_;
-    my $db = ADBOS::DB->new;
+    my $config = simple_config;
+    my $db = ADBOS::DB->new($config);   
     return $db->userDelete($user);
 }
 
@@ -110,7 +112,8 @@ sub update($)
     {	delete $user->{password};
     }
         
-    my $db = ADBOS::DB->new;
+    my $config = simple_config;
+    my $db = ADBOS::DB->new($config);   
     return $db->userUpdate($user);
 }
 
@@ -122,7 +125,8 @@ sub resetpw($;$)
     $crypt->add($pw);
     my $coded = $crypt->generate;
 
-    my $db = ADBOS::DB->new;
+    my $config = simple_config;
+    my $db = ADBOS::DB->new($config);   
     my $update = { id => $user, password => $coded};
     if ($logchange)
     {
