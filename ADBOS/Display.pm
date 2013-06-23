@@ -8,6 +8,7 @@ use Template;
 use ADBOS::DB;
 use ADBOS::Parse;
 use ADBOS::Config;
+use Email::Valid;
 
 =pod
 
@@ -343,6 +344,48 @@ sub users($$;$)
     standard_template($file, $vars);
 }
 
+sub usercreate($$;$)
+{   my ($self,$user) = @_;
+
+    my $q = $self->{qry};
+    my @errors; my $success; my $nuser;
+
+    if ($q->param('create'))
+    {
+        $nuser->{surname} = $q->param('surname')
+            or push @errors, "Please enter a surname";
+        $nuser->{forename} = $q->param('forename')
+            or push @errors, "Please enter a forename";
+        $nuser->{email} = $q->param('email')
+            or push @errors, "Please enter an email address";
+
+        push @errors, "The email address already exists. Please use the reset password functionality."
+            if $db->userGet({ email => $nuser->{email} });
+        push @errors, 'Please enter a valid email address (eg your-role@mod.uk).'
+            unless (Email::Valid->address($nuser->{email});
+    }
+
+    if (!@errors && $q->param('create'))
+    {
+        if (my $pw = $auth->create($nuser))
+        {
+            $success = "Your account was created succesfully. You will receive an email with your password";
+        } else {
+            push @errors, "There was an error creating the user";
+        }
+    }
+
+    my $file = 'createuser.html';
+    my $vars =
+        {
+          nuser    => $nuser,
+          errors   => \@errors,
+          success  => $success,
+          title    => 'Account registration'
+        };
+    standard_template($file, $vars);
+}
+
 sub tasks($$;$)
 {   my ($self,$user,$auth,$taskview) = @_;
 
@@ -399,10 +442,77 @@ sub resetpw($$)
     my $file = 'resetpw.html';
     my $vars =
         {
-          user     => $user,
           error    => $error,
           success  => $success,
           message  => $message,
+          title    => 'Reset Password'
+        };
+    standard_template($file, $vars);
+}
+
+sub resetpwlink($)
+{   my ($self,$code) = @_;
+
+    my ($success, $error);
+    if (my $user = $db->resetpwGet($code))
+    {
+        my $password = $auth->resetpw($user->{id}, 1);
+
+        if ($password)
+        {
+            $error = "Failed to email new password"
+                unless ADBOS::Email->emailPassword($password, $user->{email});
+        } else {
+            $error = "Failed to reset password" unless $password;
+        }
+    } else
+    {
+        $error = "Code was not found in database. Please try again.";
+    }
+
+    my $file = 'resetpw.html';
+    my $vars =
+        {
+          error    => $error,
+          success  => $success,
+          title    => 'Reset Password'
+        };
+    standard_template($file, $vars);
+}
+
+sub resetpwemail($)
+{   my ($self) = @_;
+
+    my $q = $self->{qry};
+    my ($success, $message);
+
+    if ($q->param('email'))
+    {
+        my $email = $q->param('email');
+        my $code = $db->resetpwCreate($email);
+        
+        if ($code)
+        {
+            my $link = "http://$config->{server}/reset/$code";
+            emailReset($link,$email);
+            $success = "An email has been sent to your email address. Please follow the link
+                        contained within it in order to reset your password.";
+        }
+        else {
+            $error = "There was an error generating a reset code. Have you entered your
+                      correct email address?";
+        }
+    } else
+    {
+        $message = "Please enter your registered email address below and click submit";
+    }
+    
+    my $file = 'resetpw.html';
+    my $vars =
+        {
+          message  => $message,
+          error    => $error,
+          success  => $success,
           title    => 'Reset Password'
         };
     standard_template($file, $vars);

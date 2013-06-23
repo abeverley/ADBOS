@@ -66,10 +66,10 @@ elsif ($req->unparsed_uri =~ m!^/+brief/?!gi)
     $user = $auth->login if !$user;
     $display->brief($user,$auth);
 }
-elsif ($req->unparsed_uri =~ m!^/+reset!gi)
+elsif ($req->unparsed_uri =~ m!^/+reset/?([a-z0-9]*)!gi)
 {
-    $user = $auth->login if !$user;
-    $display->resetpw($user, $auth);
+    $user = $auth->login unless ($user || $1);
+    $display->resetpw($user,$auth,$1);
 }
 else
 {

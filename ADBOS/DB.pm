@@ -109,12 +109,52 @@ sub shipTask($)
     $s->update({ tasks_id => $task }) if $s;
 }
 
-sub shipAll()
+sub shipAll($)
 {   my ($self, $id) = @_;
 
     my $ship_rs = $self->sch->resultset('Ship');
     my @r = $ship_rs->search({}, {order_by => { '-asc' =>  [ 'me.name' ] } })->all;
     \@r;
+}
+
+sub resetpwCreate($)
+{   my ($self, $email) = @_;
+
+    my $user_rs = $self->sch->resultset('User');
+    my ($user) = $user_rs->search({ email => $email });
+    
+    return unless $user;
+
+    my $rand = new String::Random;
+    my $code;
+    
+    my $reset_rs = $self->sch->resultset('Reset');
+    while (!$code || $opdef_rs->search({ code => $code }))
+    {
+        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
+    }
+    
+    my $values = {
+        email => $email,
+        code => $code,
+        user_id => $user->id
+    }
+    
+    $opdef_rs->create($values) ? $code : 0;
+}
+    
+
+sub resetpwGet($)
+{   my ($self, $code)
+
+    my $reset_rs = $self->sch->resultset('Reset');
+    my ($r) = ($$opdef_rs->search({ code => $code }))
+    
+    return unless $r;
+    
+    my $user_rs = $self->sch->resultset('User');
+    my ($user) = $user_rs->search({ id => $r->user_id });
+    $user;
 }
 
 sub signalProcess($;$$)
