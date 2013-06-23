@@ -65,6 +65,12 @@ __PACKAGE__->table("users");
   is_nullable: 1
   size: 128
 
+=head2 email
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 256
+
 =head2 type
 
   data_type: 'enum'
@@ -108,6 +114,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 128 },
   "password",
   { data_type => "varchar", is_nullable => 1, size => 128 },
+  "email",
+  { data_type => "varchar", is_nullable => 1, size => 256 },
   "type",
   {
     data_type => "enum",
@@ -181,8 +189,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-23 16:51:19
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:oXwuXSmBA5/Bxa3Bk1XVCg
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-23 17:21:01
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:141qoUofZOF2ym1+rVfW9g
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

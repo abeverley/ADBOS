@@ -129,10 +129,11 @@ sub resetpwCreate($)
     my $rand = new String::Random;
     my $code;
     
-    my $reset_rs = $self->sch->resultset('Reset');
-    while (!$code || $reset_rs->search({ code => $code }))
+    my $reset_rs = $self->sch->resultset('Resetpw');
     {
         $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
+        my ($found) = $reset_rs->search({ code => $code });
+        redo if $found;
     }
     
     my $values = {
@@ -146,9 +147,9 @@ sub resetpwCreate($)
     
 
 sub resetpwGet($)
-{   my ($self, $code);
+{   my ($self, $code) = @_;
 
-    my $reset_rs = $self->sch->resultset('Reset');
+    my $reset_rs = $self->sch->resultset('Resetpw');
     my ($r) = ($reset_rs->search({ code => $code }));
     
     return unless $r;
@@ -476,12 +477,12 @@ sub matdemStore($)
 sub userCreate($)
 {   my ($self, $user) = @_;
     my $user_rs = $self->sch->resultset('User');
-
     return unless $user->{username} && $user->{email};
     return
-        if $user_rs->search({ username => $user->{username} }); # Username exists
+        if $user_rs->search({ username => $user->{username} })->count; # Username exists
     return
-        if $user_rs->search({ email => $user->{email} }); # Email exists
+        if $user_rs->search({ email => $user->{email} })->count; # Email exists
+    $user->{created} = \'NOW()';
     $user_rs->create( $user )->id;
 }
 

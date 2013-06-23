@@ -85,7 +85,7 @@ sub create($)
     my $crypt=Crypt::SaltedHash->new(algorithm=>'SHA-512');
     $crypt->add($pw);
     $user->{password} = $crypt->generate;
-    
+
     my $config = simple_config;
     my $db = ADBOS::DB->new($config);   
     return $pw if $db->userCreate($user);
@@ -135,7 +135,7 @@ sub resetpw($;$)
     else {
         $update->{pwchanged} = undef; # Force pw change on login
     }
-        
+
     return $pw if $db->userUpdate($update);
     0;
 }

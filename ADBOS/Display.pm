@@ -8,6 +8,7 @@ use Template;
 use ADBOS::DB;
 use ADBOS::Parse;
 use ADBOS::Config;
+use ADBOS::Email;
 use Email::Valid;
 
 =pod
@@ -360,6 +361,8 @@ sub userregister($$;$)
             or push @errors, "Please enter a forename";
         $nuser->{email} = $q->param('email')
             or push @errors, "Please enter an email address";
+        $nuser->{username} = $q->param('email');
+        $nuser->{type} = 'viewer';
 
         push @errors, "The email address already exists. Please use the reset password functionality."
             if $db->userGet({ email => $nuser->{email} });
@@ -371,13 +374,23 @@ sub userregister($$;$)
     {
         if (my $pw = $auth->create($nuser))
         {
-            $success = "Your account was created succesfully. You will receive an email with your password";
+            my $code = $db->resetpwCreate($nuser->{email});
+            if ($code)
+            {
+                my $link = "http://$config->{server}/reset/$code";
+                ADBOS::Email->emailReset($link,$nuser->{email});
+                $success = "An email has been sent to your email address. Please follow the link
+                            contained within it in order to receive your password.";
+            } else
+            {
+                push @errors, "Your account was created succesfully but there was an error emailing your password.";
+            }
         } else {
             push @errors, "There was an error creating the user";
         }
     }
 
-    my $file = 'createuser.html';
+    my $file = 'register.html';
     my $vars =
         {
           nuser    => $nuser,
@@ -460,12 +473,16 @@ sub resetpwlink($)
     my ($success, $error);
     if (my $user = $db->resetpwGet($code))
     {
-        my $password = $auth->resetpw($user->{id}, 1);
+        my $password = $auth->resetpw($user->id, 1);
 
         if ($password)
         {
-            $error = "Failed to email new password"
-                unless ADBOS::Email->emailPassword($password, $user->{email});
+            if (ADBOS::Email->emailPassword($password, $user->email))
+            {
+                $success = "Your password has been emailed";
+            } else {
+                $error = "Failed to email new password"
+            }
         } else {
             $error = "Failed to reset password" unless $password;
         }
@@ -474,7 +491,7 @@ sub resetpwlink($)
         $error = "Code was not found in database. Please try again.";
     }
 
-    my $file = 'resetpw.html';
+    my $file = 'message.html';
     my $vars =
         {
           error    => $error,
@@ -498,7 +515,7 @@ sub resetpwemail($)
         if ($code)
         {
             my $link = "http://$config->{server}/reset/$code";
-            emailReset($link,$email);
+            ADBOS::Email->emailReset($link,$email);
             $success = "An email has been sent to your email address. Please follow the link
                         contained within it in order to reset your password.";
         }
@@ -511,7 +528,7 @@ sub resetpwemail($)
         $message = "Please enter your registered email address below and click submit";
     }
     
-    my $file = 'resetpw.html';
+    my $file = 'emailpw.html';
     my $vars =
         {
           message  => $message,
