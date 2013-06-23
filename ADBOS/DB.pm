@@ -7,6 +7,7 @@ use DBI              ();
 use ADBOS::Schema;
 use ADBOS::Parse;
 use DateTime::Format::Strptime;
+use String::Random;
 
 =pod
 
@@ -129,7 +130,7 @@ sub resetpwCreate($)
     my $code;
     
     my $reset_rs = $self->sch->resultset('Reset');
-    while (!$code || $opdef_rs->search({ code => $code }))
+    while (!$code || $reset_rs->search({ code => $code }))
     {
         $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
     }
@@ -138,17 +139,17 @@ sub resetpwCreate($)
         email => $email,
         code => $code,
         user_id => $user->id
-    }
+    };
     
-    $opdef_rs->create($values) ? $code : 0;
+    $reset_rs->create($values) ? $code : 0;
 }
     
 
 sub resetpwGet($)
-{   my ($self, $code)
+{   my ($self, $code);
 
     my $reset_rs = $self->sch->resultset('Reset');
-    my ($r) = ($$opdef_rs->search({ code => $code }))
+    my ($r) = ($reset_rs->search({ code => $code }));
     
     return unless $r;
     

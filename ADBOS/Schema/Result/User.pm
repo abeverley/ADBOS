@@ -165,9 +165,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 resetpws
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LDfG5CQ8Aez8+gqS+jqIoQ
+Type: has_many
+
+Related object: L<ADBOS::Schema::Result::Resetpw>
+
+=cut
+
+__PACKAGE__->has_many(
+  "resetpws",
+  "ADBOS::Schema::Result::Resetpw",
+  { "foreign.user_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-23 16:51:19
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:oXwuXSmBA5/Bxa3Bk1XVCg
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

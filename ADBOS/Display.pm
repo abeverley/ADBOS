@@ -344,12 +344,14 @@ sub users($$;$)
     standard_template($file, $vars);
 }
 
-sub usercreate($$;$)
+sub userregister($$;$)
 {   my ($self,$user) = @_;
 
     my $q = $self->{qry};
     my @errors; my $success; my $nuser;
 
+    my $auth = ADBOS::Auth->new;
+    
     if ($q->param('create'))
     {
         $nuser->{surname} = $q->param('surname')
@@ -362,7 +364,7 @@ sub usercreate($$;$)
         push @errors, "The email address already exists. Please use the reset password functionality."
             if $db->userGet({ email => $nuser->{email} });
         push @errors, 'Please enter a valid email address (eg your-role@mod.uk).'
-            unless (Email::Valid->address($nuser->{email});
+            unless (Email::Valid->address($nuser->{email}));
     }
 
     if (!@errors && $q->param('create'))
@@ -453,6 +455,8 @@ sub resetpw($$)
 sub resetpwlink($)
 {   my ($self,$code) = @_;
 
+    my $auth = ADBOS::Auth->new;
+    
     my ($success, $error);
     if (my $user = $db->resetpwGet($code))
     {
@@ -484,7 +488,7 @@ sub resetpwemail($)
 {   my ($self) = @_;
 
     my $q = $self->{qry};
-    my ($success, $message);
+    my ($success, $message, $error);
 
     if ($q->param('email'))
     {
