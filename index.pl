@@ -66,6 +66,16 @@ elsif ($req->unparsed_uri =~ m!^/+brief/?!gi)
     $user = $auth->login if !$user;
     $display->brief($user,$auth);
 }
+elsif ($req->unparsed_uri =~ m!^/+confirm/([a-z0-9]+)!gi)
+{
+    # User confirming their email address
+    $display->confirm($1);
+}
+elsif ($req->unparsed_uri =~ m!^/+approve/([a-z0-9]+)!gi)
+{
+    # Approval of account application by admin
+    $display->approve($1);
+}
 elsif ($req->unparsed_uri =~ m!^/+reset/?([a-z0-9]*)!gi && !$q->param('login'))
 {
     $display->resetpwlink($1) if $1;

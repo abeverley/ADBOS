@@ -288,10 +288,15 @@ sub users($$;$)
     {
         if ($q->param('create'))
         {
-            if (my $pw = $auth->create($nuser))
+            $user->{password} = $auth->password;
+            if(db->userCreate($nuser))
             {
-                $success = "The user was created succesfully with the password <strong>$pw</strong>";
+                $success = "The user was created succesfully with the password <strong>$user->{password}</strong>";
                 $action = undef;
+            }
+            else {
+                $action = 'create';
+                push @errors, "There was an error creating the user";
             } else {
                 $action = 'create';
                 push @errors, "There was an error creating the user";
@@ -372,18 +377,19 @@ sub userregister($$;$)
 
     if (!@errors && $q->param('create'))
     {
-        if (my $pw = $auth->create($nuser))
+        if (my $id = $db->userCreate($nuser))
         {
-            my $code = $db->resetpwCreate($nuser->{email});
+            my $code = $db->userRequestCode($id);
             if ($code)
             {
-                my $link = "http://$config->{server}/reset/$code";
-                ADBOS::Email->emailReset($link,$nuser->{email});
-                $success = "An email has been sent to your email address. Please follow the link
-                            contained within it in order to receive your password.";
+                my $link = "http://$config->{server}/confirm/$code";
+                ADBOS::Email->emailConfirm($link,$nuser->{email});
+                $success = "An email has now been sent to you. Please follow the link
+                            contained within it in order to confirm your email address.";
             } else
             {
-                push @errors, "Your account was created succesfully but there was an error emailing your password.";
+                push @errors, "Your account was created succesfully but there was an error
+                                emailing your confirmation email.";
             }
         } else {
             push @errors, "There was an error creating the user";
@@ -535,6 +541,56 @@ sub resetpwemail($)
           error    => $error,
           success  => $success,
           title    => 'Reset Password'
+        };
+    standard_template($file, $vars);
+}
+
+sub confirm($)
+{   my ($self, $code) = @_;
+
+    my ($success, $error);
+
+    if (my $user = userConfirm($code))
+    {
+        $success = "Thank you, your email address has been confirmed. Your account
+                      request will now be sent for approval by the FOMO team.";
+        my $c = userRequestApproval($id);
+        my $link = "http://$config->{server}/approve/$code";
+
+        ADBOS::Email->emailApprove($link,$user);
+        $success = "An email has been sent to your email address. Please follow the link
+                    contained within it in order to reset your password.";
+        
+    } else
+    {
+        $error = "There was an error locating your confirmation code or
+                    confirming your account";
+    }
+    
+    my $file = 'message.html';
+    my $vars =
+        {
+          error    => $error,
+          success  => $success,
+          title    => 'Confirm email address'
+        };
+    standard_template($file, $vars);
+}
+
+sub approve($)
+{   my ($self, $code) = @_;
+
+    my ($success, $error);
+
+    userApprove($code) ? $success = "The user's request has been approved."
+                       : $error = "There was an error approving the request.";
+    
+    my $file = 'message.html';
+    my $vars =
+        {
+          error    => $error,
+          success  => $success,
+          title    => 'Confirm email address'
         };
     standard_template($file, $vars);
 }

@@ -78,18 +78,12 @@ sub login()
     $display->login($message);
 }
 
-sub create($)
-{   my ($self, $user) = @_;
-
+sub password()
+{   my $self = shift;
     my $pw = $self->randompw;
     my $crypt=Crypt::SaltedHash->new(algorithm=>'SHA-512');
     $crypt->add($pw);
-    $user->{password} = $crypt->generate;
-
-    my $config = simple_config;
-    my $db = ADBOS::DB->new($config);   
-    return $pw if $db->userCreate($user);
-    0;
+    $crypt->generate;
 }
 
 sub delete($)

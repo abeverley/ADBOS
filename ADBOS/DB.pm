@@ -146,6 +146,58 @@ sub resetpwCreate($)
 }
     
 
+sub userRequestCode($)
+{   my ($self, $id) = @_;
+
+    my $rand = new String::Random;
+    my $code;
+    
+    my $user_rs = $self->sch->resultset('User');
+    {
+        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
+        my ($found) = $user_rs->search({ email_confirm_code => $code });
+        redo if $found;
+    }
+    $user_rs->find($id)->update->({ email_confirm_code => $code });
+    $code ? $code : 0;
+}
+
+sub userRequestApproval($)
+{   my ($self, $id) = @_;
+
+    my $rand = new String::Random;
+    my $code;
+    
+    my $user_rs = $self->sch->resultset('User');
+    {
+        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
+        my ($found) = $user_rs->search({ account_approval => $code });
+        redo if $found;
+    }
+    $user_rs->find($id)->update->({ account_approval => $code });
+    $code ? $code : 0;
+}
+
+sub userConfirm($)
+{   my ($self, $code) = @_;
+
+    my $user_rs = $self->sch->resultset('User');
+    my ($found) = $user_rs->search({ email_confirm_code => $code });
+
+    return unless $found;
+    $found->update->({ email_confirmed => 1 }) ? $found : 0;
+}
+
+sub userApprove($)
+{   my ($self, $code) = @_;
+
+    my $user_rs = $self->sch->resultset('User');
+    my ($found) = $user_rs->search({ account_approval => $code });
+
+    return unless $found;
+    $found->update->({ enabled => 1 });
+}
+
 sub resetpwGet($)
 {   my ($self, $code) = @_;
 
