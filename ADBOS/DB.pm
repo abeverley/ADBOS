@@ -177,7 +177,7 @@ sub signalOther($;$$)
     # Try to process a signal that wasn't parsed
     my ($self, $rawtext, $status, $signalsid) = @_;
 
-    if ($rawtext =~ m!/(NAVOPDEF|NAVDEFREP)/!)
+    if ($rawtext =~ m!/\h*(NAVOPDEF|NAVDEFREP)\h*/!)
     {
         $$status = "I think this is an OPDEF as I've found the phrase /NAVOPDEF/ or /NAVDEFREP/.
             However, I've failed to parse it as an OPDEF signal or sitrep.";
