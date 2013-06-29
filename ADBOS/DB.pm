@@ -209,7 +209,7 @@ sub signalOther($;$$)
     my $values = $parser->otherTo($rawtext);
 
     if (!$values) {
-        $$status = "Failed to find reference to OPDEF" if defined $status;
+        $$status = "Failed to find reference to OPDEF or invalid signal format" if defined $status;
         return 0;
     }
 

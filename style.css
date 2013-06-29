@@ -76,6 +76,14 @@ p {
     padding-top:30px;
 }
 
+.parsenote {
+	vertical-align:top;
+	padding-left: 20px;
+}
+
+.inline {
+	display: inline;
+}
 
 .error {
 	font-size: 10pt;

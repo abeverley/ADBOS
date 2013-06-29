@@ -646,6 +646,42 @@ sub unparsed($$)
   standard_template($file, $vars);
 }
 
+sub signalNew($)
+{
+  my ($self, $user) = @_;
+  my $q = $self->{qry};
+  my $status; my $error;
+  if ($q->param('retry'))
+  {
+      my $parser = ADBOS::Parse->new();
+      if (my $values =  $parser->parse($q->param('signal')))
+      {
+          $error = 1 unless $db->signalProcess($values, \$status);
+      } elsif ($db->signalOther($q->param('signal'), \$status))
+      {
+      }
+      else 
+      {   $status = "Parsing failed - please try again" if !$status;
+          $error = 1;
+      }
+  }
+
+  # Show the user submitted signal if applicable, otherwise get from database
+  my $view = ($q->param('retry') && $error) ?
+             { content => $q->param('signal') }
+           : { content => '' }; # Stop error message being shown
+  my $signals = $db->signalsFailed;
+  my $file = 'unparsed.html';
+  my $vars = { signals => $signals
+              ,title  => 'Signals not parsed'
+              ,view => $view
+              ,error => $status
+              ,user => $user
+             };
+
+  standard_template($file, $vars);
+}
+
 sub authenticate($)
 {   my ($self, $auth) = @_;
     return if $auth->login;

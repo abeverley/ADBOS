@@ -42,12 +42,18 @@ elsif ($req->unparsed_uri =~ m!^/+ships/?([0-9]*/?([0-9]*))!gi)
 {
     $display->ship($user, $1)
 }
-elsif ($req->unparsed_uri =~ m!^/+unparsed/?([0-9]*)!gi)
+elsif ($req->unparsed_uri =~ m!^/+unparsed/?(new|[0-9]*)!gi)
 {
     $user = $auth->login if !$user;
     $display->main($user) unless ($user->{type} eq 'member' || $user->{type} eq 'admin');
-    my $id = $q->param('id') || $1;
-    $display->unparsed($user, $id);
+    if ($1 eq 'new')
+    {
+        $display->signalNew($user);
+    }
+    else {
+        my $id = $q->param('id') || $1;
+        $display->unparsed($user, $id);
+    }
 }
 elsif ($req->unparsed_uri =~ m!^/+users/?([0-9]*)!gi)
 {

@@ -19,9 +19,13 @@
                 <td><a href='[% signal.id %]'>Signal ID [% signal.id %]</a></td>
                 </tr>
             [% END %]
+            <tr>
+            <td><a href='new'>Create new</a></td>
+            </tr>
             </table>
         [% ELSE %]
             No unparsed signals
+            <a href='new'>Create new</a>
         [% END %]
     </div>
 
@@ -34,9 +38,28 @@
         [% END %]
         <form method="post">
         <div class="form_row">
-            <textarea class="formstyle" cols="72" rows="35" name="signal">[% view.content %]</textarea>
+            <div class="floatleft">
+                <textarea class="formstyle" cols="72" rows="35" name="signal">[% view.content %]</textarea>
+            </div>
+            <div class="floatleft">
+                <span class="parsenote"><h4>Minimum OPDEF format</h4>
+                <pre>
+131428Z AUG 13
+FM HMS SHIP
+OPDEF/ME 10-13 [SITREP 2]
+AMPN/1. C2
+2.
+3.
+4.
+5.
+[6.]
+[7.]
+RMKS
+                </pre>
+                </span>
+            </div>
         </div>
-        <div class="form_row">
+        <div class="form_row" style="clear:both">
             <input class='submit' type='submit' value='Retry Parse' name='retry'>
             <input class='submit' type='submit' value='Delete' name='delete'>
         </div>
