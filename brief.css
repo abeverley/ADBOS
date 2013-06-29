@@ -57,6 +57,12 @@ div.comments{
     padding-top:5px;
 }
 
+div.homelink{
+    position:absolute;
+    right:10px;
+    font-size: 0.8em;
+}
+
 hr {
 	clear: both;
 	border: 0px;
