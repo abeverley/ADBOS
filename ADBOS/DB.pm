@@ -472,9 +472,9 @@ sub userGet($)
     my $user_rs = $self->sch->resultset('User');
     
     my $u;
-    ($u) = $user_rs->search({ username => $user->{username}, deleted => 0 })
+    ($u) = $user_rs->search({ username => $user->{username}, deleted => 0, enabled => 1 })
         if $user->{username};
-    ($u) = $user_rs->search({ id => $user->{id}, deleted => 0 })
+    ($u) = $user_rs->search({ id => $user->{id}, deleted => 0, enabled => 1 })
         if $user->{id};
     $u;
 }
