@@ -5,7 +5,7 @@
   [% IF user.type == "admin" || user.type == "member" %]
   <form id="shiptask" method="POST">
   <div class="form_row">
-      <label class="formstyle" for="name">Task:</label>
+      <label class="formstyle" for="task">Task:</label>
       <select name="task" class="formstyle">
       <option></option>
       [% FOREACH task IN tasks %]
@@ -16,6 +16,10 @@
       >[% task.name %]</option>
       [% END %]
       </select>
+      <label class="formstyle" for="Brief priority">Brief priority:</label>
+      <input type="text" name="priority" class="formstyle" style="width:50px" value="[% ship.priority %]">
+      <label class="formstyle" for="Programme">Programme:</label>
+      <input type="text" name="programme" class="formstyle" style="width:300px" value="[% ship.programme %]">
       <input class="submit" type="submit" value="Update" name="shipupdate">
   </div>
   </form>

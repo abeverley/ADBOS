@@ -168,7 +168,11 @@ sub ship($$$)
     my $ships = $db->shipAll;
     if ($ships_id)
     {
-        $db->shipTask($ships_id, $q->param('task'))
+        my $values = { tasks_id  => ($q->param('task') || undef)
+                      ,programme => $q->param('programme')
+                      ,priority  => $q->param('priority')
+                     };
+        $db->shipUpdate($ships_id, $values)
             if $q->param('shipupdate');
         
         my %where;

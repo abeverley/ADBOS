@@ -86,7 +86,7 @@ sub opdefBrief($)
                    ]
         },
         { prefetch => { ships => {opdefs=>['category', 'comments']} },
-          order_by => [ { '-asc'  => [qw/me.name ships.name opdefs.category opdefs.number_year opdefs.number_serial/] },
+          order_by => [ { '-asc'  => [qw/me.name ships.priority ships.name opdefs.category opdefs.number_year opdefs.number_serial/] },
                         { '-desc' => 'comments.time' }
                       ]
         }
@@ -102,12 +102,11 @@ sub shipGet($)
     $ship_rs->find($id);
 }
 
-sub shipTask($)
-{   my ($self, $ship, $task) = @_;
+sub shipUpdate($$)
+{   my ($self, $ship, $values) = @_;
     my $ship_rs = $self->sch->resultset('Ship');
     my $s = $ship_rs->find($ship);
-    $task = undef if !$task;
-    $s->update({ tasks_id => $task }) if $s;
+    $s->update($values) if $s;
 }
 
 sub shipAll($)

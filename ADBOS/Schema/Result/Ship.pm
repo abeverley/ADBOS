@@ -53,6 +53,17 @@ __PACKAGE__->table("ships");
   is_foreign_key: 1
   is_nullable: 1
 
+=head2 programme
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 1024
+
+=head2 priority
+
+  data_type: 'integer'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -62,6 +73,10 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 64 },
   "tasks_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
+  "programme",
+  { data_type => "varchar", is_nullable => 1, size => 1024 },
+  "priority",
+  { data_type => "integer", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -114,8 +129,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:o37fwvKP08JjBLeR1fu+8A
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-29 20:16:15
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:DBT7Hhuo2KBnoDq79qETtQ
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
