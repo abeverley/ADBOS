@@ -15,7 +15,7 @@
         [% FOREACH ship IN task.ships %]
             <h2>[% ship.name %]</h2>
             [% FOREACH opdef IN ship.opdefs %]
-                [% IF opdef.modified.epoch > time - 86400 OR (opdef.comments.first.time.epoch AND opdef.comments.first.time.epoch > time - 86400) %]
+                [% IF opdef.modified.epoch > time - 86400 * period OR (opdef.comments.first.time.epoch AND opdef.comments.first.time.epoch > time - 86400 * period) %]
                     <h3 class="highlight">
                 [% ELSE %]
                     <h3>

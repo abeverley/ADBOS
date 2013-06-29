@@ -67,10 +67,10 @@ elsif ($req->unparsed_uri =~ m!^/+tasks/?([0-9]*)!gi)
     $display->main($user) unless ($user->{type} eq 'member' || $user->{type} eq 'admin');
     $display->tasks($user,$auth,$1);
 }
-elsif ($req->unparsed_uri =~ m!^/+brief/?!gi)
+elsif ($req->unparsed_uri =~ m!^/+brief/?([0-9]*)!gi)
 {
     $user = $auth->login if !$user;
-    $display->brief($user,$auth);
+    $display->brief($1);
 }
 elsif ($req->unparsed_uri =~ m!^/+confirm/([a-z0-9]+)!gi)
 {

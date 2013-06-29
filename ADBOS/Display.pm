@@ -144,16 +144,18 @@ sub opdef($$$;$)
     standard_template('opdef.html', $vars);
 }
 
-sub brief($$)
-{   my ($self, $user, $opdefs_id, $signals_id) = @_;
+sub brief()
+{   my ($self, $period) = @_;
 
+    $period = (int $period // 1) || 1; # Should be sanitised on input, but just in case...
     my $q = $self->{qry};
 
-    my $tasks = $db->opdefBrief;
+    my $tasks = $db->opdefBrief($period);
 
     my $vars =
-        { tasks => $tasks,
-          time => time
+        { tasks  => $tasks,
+          time   => time,
+          period => ($period || 1)
         };
 
     standard_template('brief.html', $vars);

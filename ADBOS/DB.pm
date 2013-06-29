@@ -74,15 +74,16 @@ sub opdefSummary($$)
 }
 
 sub opdefBrief($)
-{   my $self = shift;
+{   my ($self,$period) = @_;
+    $period = (int $period // 1) || 1; # Should be sanitised on input, but just in case...
 
     my $task_rs = $self->sch->resultset('Task');
 
     my @opdefs = $task_rs->search(
         { '-or' => [ 'me.onbrief' => 1, 'opdefs.onbrief' => 1 ],
           '-or' => [ {'opdefs.category' => {'<=' => 7}, 'opdefs.rectified' => 0}
-                    ,{'opdefs.category_prev' => {'<=' => 7}, 'opdefs.category_changed' => {'>' => \"DATE_SUB(NOW(), INTERVAL 1 DAY)"} }
-                    ,{'opdefs.rectified' => 1, 'opdefs.modified' => {'>' => \"DATE_SUB(NOW(), INTERVAL 1 DAY)"} }
+                    ,{'opdefs.category_prev' => {'<=' => 7}, 'opdefs.category_changed' => {'>' => \"DATE_SUB(NOW(), INTERVAL $period DAY)"} }
+                    ,{'opdefs.rectified' => 1, 'opdefs.modified' => {'>' => \"DATE_SUB(NOW(), INTERVAL $period DAY)"} }
                    ]
         },
         { prefetch => { ships => {opdefs=>['category', 'comments']} },
