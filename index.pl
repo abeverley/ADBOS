@@ -80,7 +80,7 @@ elsif ($req->unparsed_uri =~ m!^/+confirm/([a-z0-9]+)!gi)
 elsif ($req->unparsed_uri =~ m!^/+approve/([a-z0-9]+)!gi)
 {
     # Approval of account application by admin
-    $display->accountApprove($1);
+    $display->accountApprove($1,$user);
 }
 elsif ($req->unparsed_uri =~ m!^/+reset/?([a-z0-9]*)!gi && !$q->param('login'))
 {

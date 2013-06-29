@@ -564,25 +564,29 @@ sub accountEmailConfirm($)
 
 # Used to approve an account request
 sub accountApprove($)
-{   my ($self, $code) = @_;
+{   my ($self, $code, $user) = @_;
     my ($success, $error);
 
-    my $user = $db->userApprove($code);
+    my $u = $db->userApprove($code);
     
-    if ($user) { $success = "The user's request has been approved." }
-          else { $error = "There was an error approving the request."; }
-
-    # Generate code for password reset and email to user
-    my $c = $db->resetpwCreate($user->email);
-    my $link = "http://$config->{server}/reset/$c";
-    ADBOS::Email->emailAccountActivated($link,$user->email);
+    if ($u) {
+        $success = "The user's request has been approved.";
+        # Generate code for password reset and email to user
+        my $c = $db->resetpwCreate($u->email);
+        my $link = "http://$config->{server}/reset/$c";
+        ADBOS::Email->emailAccountActivated($link,$u->email);
+    }
+    else {
+        $error = "There was an error approving the request.";
+    }
 
     my $file = 'message.html';
     my $vars =
         {
-          error    => $error,
-          success  => $success,
-          title    => 'Approve account request'
+          error   => $error,
+          success => $success,
+          user    => $user,
+          title   => 'Approve account request'
         };
     standard_template($file, $vars);
 }
