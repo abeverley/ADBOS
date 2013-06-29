@@ -161,12 +161,12 @@ sub otherFm()
     my %values;
     $message =~ s/\r*//g; # Remove any nasty carriage-returns
  
-    if ($message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
+    if ($message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*?
                     [\s\.,/]+(?<type>ME|WE|AR|OP)[-\s]*
                     ((OPDEF|DEFREP)\h+)?
                     (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix
                     ||
-        $message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*
+        $message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*?
                     ((OPDEF|DEFREP)\h+)?
                     (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)
                     \s+(?<type>ME|WE|AR|OP)[-\s]+!ix)
