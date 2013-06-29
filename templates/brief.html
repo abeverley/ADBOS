@@ -22,7 +22,7 @@
                 [% END %]
                 OPDEF [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] ([% opdef.category.name %]):
                         [% IF opdef.rectified %]<strong>Rectified</strong>[% END %]
-               	        [% opdef.line5 %]</h3>
+               	        [% opdef.line5 %] ([% opdef.parent_equip %])</h3>
                 <div class="comments">
                 [% FOREACH comment IN opdef.comments %]
                     [% LAST IF loop.index == 10 %]
