@@ -180,7 +180,8 @@ sub signalOther($;$$)
 
     if ($rawtext =~ m!/(NAVOPDEF|NAVDEFREP)/!)
     {
-        $$status = "Found phrase /NAVOPDEF/ or /NAVDEFREP/. Not going to try and parse as other signal.";
+        $$status = "I think this is an OPDEF as I've found the phrase /NAVOPDEF/ or /NAVDEFREP/.
+            However, I've failed to parse it as an OPDEF signal or sitrep.";
         return 0;
     }
 
