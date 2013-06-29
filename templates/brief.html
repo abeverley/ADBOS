@@ -11,7 +11,7 @@
 
 [% FOREACH task IN tasks %]
     [% IF task.ships %]
-        <h1>[% task.name %]</h2>
+        <h1>[% task.name %]</h1>
         [% FOREACH ship IN task.ships %]
             <h2>[% ship.name %]</h2>
             [% FOREACH opdef IN ship.opdefs %]
