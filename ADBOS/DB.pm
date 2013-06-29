@@ -118,99 +118,6 @@ sub shipAll($)
     \@r;
 }
 
-sub resetpwCreate($)
-{   my ($self, $email) = @_;
-
-    my $user_rs = $self->sch->resultset('User');
-    my ($user) = $user_rs->search({ email => $email });
-    
-    return unless $user;
-
-    my $rand = new String::Random;
-    my $code;
-    
-    my $reset_rs = $self->sch->resultset('Resetpw');
-    {
-        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
-        my ($found) = $reset_rs->search({ code => $code });
-        redo if $found;
-    }
-    
-    my $values = {
-        email => $email,
-        code => $code,
-        user_id => $user->id
-    };
-    
-    $reset_rs->create($values) ? $code : 0;
-}
-    
-
-sub userRequestCode($)
-{   my ($self, $id) = @_;
-
-    my $rand = new String::Random;
-    my $code;
-    
-    my $user_rs = $self->sch->resultset('User');
-    {
-        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
-        my ($found) = $user_rs->search({ email_confirm_code => $code });
-        redo if $found;
-    }
-    $user_rs->find($id)->update->({ email_confirm_code => $code });
-    $code ? $code : 0;
-}
-
-sub userRequestApproval($)
-{   my ($self, $id) = @_;
-
-    my $rand = new String::Random;
-    my $code;
-    
-    my $user_rs = $self->sch->resultset('User');
-    {
-        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
-        my ($found) = $user_rs->search({ account_approval => $code });
-        redo if $found;
-    }
-    $user_rs->find($id)->update->({ account_approval => $code });
-    $code ? $code : 0;
-}
-
-sub userConfirm($)
-{   my ($self, $code) = @_;
-
-    my $user_rs = $self->sch->resultset('User');
-    my ($found) = $user_rs->search({ email_confirm_code => $code });
-
-    return unless $found;
-    $found->update->({ email_confirmed => 1 }) ? $found : 0;
-}
-
-sub userApprove($)
-{   my ($self, $code) = @_;
-
-    my $user_rs = $self->sch->resultset('User');
-    my ($found) = $user_rs->search({ account_approval => $code });
-
-    return unless $found;
-    $found->update->({ enabled => 1 });
-}
-
-sub resetpwGet($)
-{   my ($self, $code) = @_;
-
-    my $reset_rs = $self->sch->resultset('Resetpw');
-    my ($r) = ($reset_rs->search({ code => $code }));
-    
-    return unless $r;
-    
-    my $user_rs = $self->sch->resultset('User');
-    my ($user) = $user_rs->search({ id => $r->user_id });
-    $user;
-}
-
 sub signalProcess($;$$)
 {
     # Processes a signal that has already been successfully parsed
@@ -575,6 +482,101 @@ sub userAll()
 {   my $self = shift;
     my $user_rs = $self->sch->resultset('User');
     $user_rs->search({ deleted => 0 })->all;
+}
+
+sub userRequestCode($)
+{   my ($self, $id) = @_;
+
+    my $rand = new String::Random;
+    my $code;
+    
+    my $user_rs = $self->sch->resultset('User');
+    {
+        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
+        my ($found) = $user_rs->search({ email_confirm_code => $code });
+        redo if $found;
+    }
+    $user_rs->find($id)->update({ email_confirm_code => $code });
+    $code ? $code : 0;
+}
+
+sub userRequestApproval($)
+{   my ($self, $id) = @_;
+
+    my $rand = new String::Random;
+    my $code;
+    
+    my $user_rs = $self->sch->resultset('User');
+    {
+        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
+        my ($found) = $user_rs->search({ account_approval => $code });
+        redo if $found;
+    }
+    $user_rs->find($id)->update({ account_approval => $code });
+    $code ? $code : 0;
+}
+
+sub userConfirm($)
+{   my ($self, $code) = @_;
+
+    my $user_rs = $self->sch->resultset('User');
+    my ($found) = $user_rs->search({ email_confirm_code => $code });
+
+    return unless $found;
+    $found->update({ email_confirmed => 1 }) ? $found : 0;
+}
+
+sub userApprove($)
+{   my ($self, $code) = @_;
+
+    my $user_rs = $self->sch->resultset('User');
+    my ($found) = $user_rs->search({ account_approval => $code });
+
+    return unless $found;
+    $found->update({ enabled => 1 }) ? $found : 0;
+}
+
+sub resetpwGet($)
+{   my ($self, $code) = @_;
+
+    my $user_rs = $self->sch->resultset('User');
+    my ($user) = $user_rs->search({ resetpw => $code });
+    $user;
+}
+
+sub resetpwClear($)
+{   my ($self, $code) = @_;
+
+    my $user_rs = $self->sch->resultset('User');
+    my ($user) = $user_rs->search({ resetpw => $code });
+    $user->update({ resetpw => undef });
+}
+
+sub resetpwCreate($)
+{   my ($self, $email) = @_;
+
+    my $user_rs = $self->sch->resultset('User');
+    my ($user) = $user_rs->search({ email => $email });
+    
+    return unless $user;
+    return $user->resetpw if $user->resetpw; # Code already exists
+    
+    my $rand = new String::Random;
+    my $code;
+    
+    {
+        $code = scalar $rand->randregex('[A-Za-z0-9]{32}');
+        my ($found) = $user_rs->search({ resetpw => $code });
+        redo if $found;
+    }
+    
+    my $values = {
+        email => $email,
+        code => $code,
+        user_id => $user->id
+    };
+    
+    $user->update({ resetpw => $code }) ? $code : 0;
 }
 
 sub taskAll()

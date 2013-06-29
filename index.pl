@@ -69,26 +69,30 @@ elsif ($req->unparsed_uri =~ m!^/+brief/?!gi)
 elsif ($req->unparsed_uri =~ m!^/+confirm/([a-z0-9]+)!gi)
 {
     # User confirming their email address
-    $display->confirm($1);
+    $display->accountEmailConfirm($1);
 }
 elsif ($req->unparsed_uri =~ m!^/+approve/([a-z0-9]+)!gi)
 {
     # Approval of account application by admin
-    $display->approve($1);
+    $display->accountApprove($1);
 }
 elsif ($req->unparsed_uri =~ m!^/+reset/?([a-z0-9]*)!gi && !$q->param('login'))
 {
-    $display->resetpwlink($1) if $1;
+    # User is resetting password using link
+    $display->pwResetFromCode($1) if $1;
     $user = $auth->login unless $user;
-    $display->resetpw($user,$auth);
+    # Reset password once logged in
+    $display->pwReset($user,$auth);
 }
 elsif ($req->unparsed_uri =~ m!^/+register/?!gi)
 {
-    $display->userregister;
+    # Register for an account
+    $display->accountRegister;
 }
 elsif ($req->unparsed_uri =~ m!^/+emailpw/?!gi)
 {
-    $display->resetpwemail;
+    # Request password reset
+    $display->pwResetRequestEmail;
 }
 else
 {

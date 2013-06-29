@@ -101,6 +101,36 @@ __PACKAGE__->table("users");
   default_value: 0
   is_nullable: 0
 
+=head2 email_confirm_code
+
+  data_type: 'char'
+  is_nullable: 1
+  size: 32
+
+=head2 account_approval
+
+  data_type: 'char'
+  is_nullable: 1
+  size: 32
+
+=head2 resetpw
+
+  data_type: 'char'
+  is_nullable: 1
+  size: 32
+
+=head2 email_confirmed
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 1
+
+=head2 enabled
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -142,6 +172,16 @@ __PACKAGE__->add_columns(
   },
   "deleted",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "email_confirm_code",
+  { data_type => "char", is_nullable => 1, size => 32 },
+  "account_approval",
+  { data_type => "char", is_nullable => 1, size => 32 },
+  "resetpw",
+  { data_type => "char", is_nullable => 1, size => 32 },
+  "email_confirmed",
+  { data_type => "tinyint", default_value => 0, is_nullable => 1 },
+  "enabled",
+  { data_type => "tinyint", default_value => 0, is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -173,24 +213,9 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
-=head2 resetpws
 
-Type: has_many
-
-Related object: L<ADBOS::Schema::Result::Resetpw>
-
-=cut
-
-__PACKAGE__->has_many(
-  "resetpws",
-  "ADBOS::Schema::Result::Resetpw",
-  { "foreign.user_id" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
-);
-
-
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-23 17:21:01
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:141qoUofZOF2ym1+rVfW9g
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-29 16:33:10
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:0s7S4GeUcPHBcZwCc0qhdA
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

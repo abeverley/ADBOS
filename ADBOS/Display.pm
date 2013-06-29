@@ -11,23 +11,8 @@ use ADBOS::Config;
 use ADBOS::Email;
 use Email::Valid;
 
-=pod
-
-  ADBOS::DB->new(CONFIG, OPTIONS);
-
-CONFIG (from resend.conf) is used as defaults for OPTIONS, and
-can be C<undef>.
-
-OPTIONS:
-
-   name           database name       DBNAME
-   user           database user       DBUSER
-   password       password of user    DBPASS
-
-=cut
-
 my $config = simple_config;
-my $db    = ADBOS::DB->new($config);
+my $db     = ADBOS::DB->new($config);
 
 sub new($$)
 {   my ($class, $q) = @_;
@@ -297,9 +282,6 @@ sub users($$;$)
             else {
                 $action = 'create';
                 push @errors, "There was an error creating the user";
-            } else {
-                $action = 'create';
-                push @errors, "There was an error creating the user";
             }
         } elsif ($q->param('update'))
         {
@@ -350,7 +332,143 @@ sub users($$;$)
     standard_template($file, $vars);
 }
 
-sub userregister($$;$)
+sub tasks($$;$)
+{   my ($self,$user,$auth,$taskview) = @_;
+
+    my $q = $self->{qry};
+
+    $db->taskNew($q->param('name'))
+        if $q->param('new');
+
+    $db->taskAddBrief($q->param('add'))
+        if $q->param('add');
+
+    $db->taskRemoveBrief($q->param('remove'))
+        if $q->param('remove');
+
+    my @alltasks = $db->taskAll;
+
+    my $file = 'tasks.html';
+    my $vars =
+        {
+          user  => $user,
+          tasks => \@alltasks,
+          title => 'Tasks'
+        };
+    standard_template($file, $vars);
+}
+
+# Used to reset and display a password through the web interface
+sub pwReset($$)
+{   my ($self,$user,$auth) = @_;
+
+    my $q = $self->{qry};
+
+    my ($success, $error, $message);
+    if ($q->param('resetpwself'))
+    {
+        if (my $pw = $auth->resetpw($user->{id}, 1))
+        {
+            $success = "Your password has been reset to <strong>$pw</strong>.
+                        Click the button again if you would like a different password.";
+            $user->{pwexpired} = 0;
+            # Update top-level session variable to ensure $user is stored
+            $auth->session->{time} = time;
+        } else {
+            $error = "There was an error resetting your password";
+        }
+    } else {
+        if ($user->{pwexpired})
+        {
+            $message = "Your password has expired. Please use the button to reset your password to a new value.";
+        } else {
+            $message = "Please use the button to reset your password to a new value.";
+        }
+    }
+
+    my $file = 'resetpw.html';
+    my $vars =
+        {
+          error    => $error,
+          success  => $success,
+          message  => $message,
+          title    => 'Reset Password'
+        };
+    standard_template($file, $vars);
+}
+
+# Used to perform a password reset using an emailed link
+sub pwResetFromCode($)
+{   my ($self,$code) = @_;
+
+    my $auth = ADBOS::Auth->new;
+    
+    my ($success, $error);
+    if (my $user = $db->resetpwGet($code))
+    {
+        if (my $password = $auth->resetpw($user->id, 1))
+        {
+            $success = "Your password has been reset to $password";
+            $db->resetpwClear($code); # Stop reset code being reused
+        } else {
+            $error = "Failed to reset password";
+        }
+    } else
+    {
+        $error = "Code was not found in database. Please try again.";
+    }
+
+    my $file = 'message.html';
+    my $vars =
+        {
+          error    => $error,
+          success  => $success,
+          title    => 'Reset Password'
+        };
+    standard_template($file, $vars);
+}
+
+# Used to request a password reset via link in email
+sub pwResetRequestEmail($)
+{   my ($self) = @_;
+
+    my $q = $self->{qry};
+    my ($success, $message, $error);
+
+    if ($q->param('email'))
+    {
+        my $email = $q->param('email');
+        my $code = $db->resetpwCreate($email);
+        
+        if ($code)
+        {
+            my $link = "http://$config->{server}/reset/$code";
+            ADBOS::Email->emailReset($link,$email);
+            $success = "An email has been sent to your email address. Please follow the link
+                        contained within it in order to reset your password.";
+        }
+        else {
+            $error = "There was an error generating a reset code. Have you entered your
+                      correct email address?";
+        }
+    } else
+    {
+        $message = "Please enter your registered email address below and click submit";
+    }
+    
+    my $file = 'emailpw.html';
+    my $vars =
+        {
+          message  => $message,
+          error    => $error,
+          success  => $success,
+          title    => 'Reset Password'
+        };
+    standard_template($file, $vars);
+}
+
+# Used for users to register themselves
+sub accountRegister($$;$)
 {   my ($self,$user) = @_;
 
     my $q = $self->{qry};
@@ -407,159 +525,20 @@ sub userregister($$;$)
     standard_template($file, $vars);
 }
 
-sub tasks($$;$)
-{   my ($self,$user,$auth,$taskview) = @_;
-
-    my $q = $self->{qry};
-
-    $db->taskNew($q->param('name'))
-        if $q->param('new');
-
-    $db->taskAddBrief($q->param('add'))
-        if $q->param('add');
-
-    $db->taskRemoveBrief($q->param('remove'))
-        if $q->param('remove');
-
-    my @alltasks = $db->taskAll;
-
-    my $file = 'tasks.html';
-    my $vars =
-        {
-          user  => $user,
-          tasks => \@alltasks,
-          title => 'Tasks'
-        };
-    standard_template($file, $vars);
-}
-
-sub resetpw($$)
-{   my ($self,$user,$auth) = @_;
-
-    my $q = $self->{qry};
-
-    my ($success, $error, $message);
-    if ($q->param('resetpwself'))
-    {
-        if (my $pw = $auth->resetpw($user->{id}, 1))
-        {
-            $success = "Your password has been reset to <strong>$pw</strong>.
-                        Click the button again if you would like a different password.";
-            $user->{pwexpired} = 0;
-            # Update top-level session variable to ensure $user is stored
-            $auth->session->{time} = time;
-        } else {
-            $error = "There was an error resetting your password";
-        }
-    } else {
-        if ($user->{pwexpired})
-        {
-            $message = "Your password has expired. Please use the button to reset your password to a new value.";
-        } else {
-            $message = "Please use the button to reset your password to a new value.";
-        }
-    }
-
-    my $file = 'resetpw.html';
-    my $vars =
-        {
-          error    => $error,
-          success  => $success,
-          message  => $message,
-          title    => 'Reset Password'
-        };
-    standard_template($file, $vars);
-}
-
-sub resetpwlink($)
-{   my ($self,$code) = @_;
-
-    my $auth = ADBOS::Auth->new;
-    
-    my ($success, $error);
-    if (my $user = $db->resetpwGet($code))
-    {
-        my $password = $auth->resetpw($user->id, 1);
-
-        if ($password)
-        {
-            if (ADBOS::Email->emailPassword($password, $user->email))
-            {
-                $success = "Your password has been emailed";
-            } else {
-                $error = "Failed to email new password"
-            }
-        } else {
-            $error = "Failed to reset password" unless $password;
-        }
-    } else
-    {
-        $error = "Code was not found in database. Please try again.";
-    }
-
-    my $file = 'message.html';
-    my $vars =
-        {
-          error    => $error,
-          success  => $success,
-          title    => 'Reset Password'
-        };
-    standard_template($file, $vars);
-}
-
-sub resetpwemail($)
-{   my ($self) = @_;
-
-    my $q = $self->{qry};
-    my ($success, $message, $error);
-
-    if ($q->param('email'))
-    {
-        my $email = $q->param('email');
-        my $code = $db->resetpwCreate($email);
-        
-        if ($code)
-        {
-            my $link = "http://$config->{server}/reset/$code";
-            ADBOS::Email->emailReset($link,$email);
-            $success = "An email has been sent to your email address. Please follow the link
-                        contained within it in order to reset your password.";
-        }
-        else {
-            $error = "There was an error generating a reset code. Have you entered your
-                      correct email address?";
-        }
-    } else
-    {
-        $message = "Please enter your registered email address below and click submit";
-    }
-    
-    my $file = 'emailpw.html';
-    my $vars =
-        {
-          message  => $message,
-          error    => $error,
-          success  => $success,
-          title    => 'Reset Password'
-        };
-    standard_template($file, $vars);
-}
-
-sub confirm($)
+# Used for users to confirm their email address
+sub accountEmailConfirm($)
 {   my ($self, $code) = @_;
 
     my ($success, $error);
 
-    if (my $user = userConfirm($code))
+    if (my $user = $db->userConfirm($code))
     {
         $success = "Thank you, your email address has been confirmed. Your account
-                      request will now be sent for approval by the FOMO team.";
-        my $c = userRequestApproval($id);
-        my $link = "http://$config->{server}/approve/$code";
+                      request will now be sent for FOMO team approval.";
+        my $c = $db->userRequestApproval($user->id);
+        my $link = "http://$config->{server}/approve/$c";
 
         ADBOS::Email->emailApprove($link,$user);
-        $success = "An email has been sent to your email address. Please follow the link
-                    contained within it in order to reset your password.";
         
     } else
     {
@@ -577,20 +556,27 @@ sub confirm($)
     standard_template($file, $vars);
 }
 
-sub approve($)
+# Used to approve an account request
+sub accountApprove($)
 {   my ($self, $code) = @_;
-
     my ($success, $error);
 
-    userApprove($code) ? $success = "The user's request has been approved."
-                       : $error = "There was an error approving the request.";
+    my $user = $db->userApprove($code);
     
+    if ($user) { $success = "The user's request has been approved." }
+          else { $error = "There was an error approving the request."; }
+
+    # Generate code for password reset and email to user
+    my $c = $db->resetpwCreate($user->email);
+    my $link = "http://$config->{server}/reset/$c";
+    ADBOS::Email->emailAccountActivated($link,$user->email);
+
     my $file = 'message.html';
     my $vars =
         {
           error    => $error,
           success  => $success,
-          title    => 'Confirm email address'
+          title    => 'Approve account request'
         };
     standard_template($file, $vars);
 }
