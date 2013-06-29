@@ -95,7 +95,7 @@ elsif ($req->unparsed_uri =~ m!^/+register/?!gi)
     # Register for an account
     $display->accountRegister;
 }
-elsif ($req->unparsed_uri =~ m!^/+emailpw/?!gi)
+elsif ($req->unparsed_uri =~ m!^/+emailpw/?!gi && !$user)
 {
     # Request password reset
     $display->pwResetRequestEmail;
