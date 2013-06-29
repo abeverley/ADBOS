@@ -23,6 +23,15 @@ h3 {
 	font-weight:normal;
 }
 
+a:link, a:visited {
+        text-decoration: none;
+        color: black;
+}
+
+a:hover {
+        text-decoration: underline;
+}
+
 @media screen
 {
     h3.highlight {

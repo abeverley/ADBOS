@@ -20,7 +20,7 @@
                 [% ELSE %]
                     <h3>
                 [% END %]
-                OPDEF [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] ([% opdef.category.name %]):
+                <a href="/opdef/[% opdef.id %]">OPDEF [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] ([% opdef.category.name %])</a>:
                         [% IF opdef.rectified %]<strong>Rectified</strong>[% END %]
                	        [% opdef.line5 %] ([% opdef.parent_equip %])</h3>
                 <div class="comments">
