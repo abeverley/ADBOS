@@ -40,7 +40,7 @@ sub parse()
     $values{dtg} = $+{dtg};
 
     if ($message =~ m% [.\n]*?
-                       \n.*(OPDEF|DEFREP)\h*/?\h*    (?<type>ME|WE|AR|OP)[\h/]*0*
+                       \n(OPDEF|DEFREP)\h*/?\h*    (?<type>ME|WE|AR|OP)[\h/]*0*
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -81,7 +81,7 @@ sub parse()
         \%values;   
     }
     elsif ($message =~ m% [.\n]*?
-                       \n.*(OPDEF|DEFREP)\h*/?\h*     (?<type>ME|WE|AR|OP)[\h/]*  # OPDEF number
+                       \n(OPDEF|DEFREP)\h*/?\h*     (?<type>ME|WE|AR|OP)[\h/]*  # OPDEF number
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
