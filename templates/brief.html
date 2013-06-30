@@ -14,9 +14,9 @@
 
 [% FOREACH task IN tasks %]
     [% IF task.ships %]
-        <h1>[% task.name %]</h1>
+        <h1>[% task.name | html_entity %]</h1>
         [% FOREACH ship IN task.ships %]
-            <h2>[% ship.name %]</h2>
+            <h2>[% ship.name | html_entity %]</h2>
             [% FOREACH opdef IN ship.opdefs %]
                 [% IF opdef.modified.epoch > time - 86400 * period OR (opdef.comments.first.time.epoch AND opdef.comments.first.time.epoch > time - 86400 * period) %]
                     <h3 class="highlight">
@@ -25,11 +25,11 @@
                 [% END %]
                 <a href="/opdef/[% opdef.id %]">OPDEF [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] ([% opdef.category.name %])</a>:
                         [% IF opdef.rectified %]<strong>Rectified</strong>[% END %]
-               	        [% opdef.line5 %] ([% opdef.parent_equip %])</h3>
+               	        [% opdef.line5 | html_entity %] ([% opdef.parent_equip | html_entity %])</h3>
                 <div class="comments">
                 [% FOREACH comment IN opdef.comments %]
                     [% LAST IF loop.index == 10 %]
-                        <p><u>[% comment.time.ymd %] (by [% comment.user.username %])</u>: [% FILTER html_line_break %][% comment.comment %][% END %]</p>
+                        <p><u>[% comment.time.ymd %] (by [% comment.user.username %])</u>: [% FILTER html_line_break %][% comment.comment | html_entity %][% END %]</p>
                 [% END %]
                 </div>
             [% END %]

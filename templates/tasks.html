@@ -23,13 +23,13 @@
               <a href="?add=[% task.id %]"><img src="/images/cross.png" alt="Not on brief. Click to add."></a>
           [% END %]
       </td>
-      <td>[% task.name %]</td>
+      <td>[% task.name | html_entity %]</td>
       <td>
           [% s = [] %]
           [% FOREACH ship IN task.ships %]
               [% s.push(ship.name) %]
           [% END %]
-          [% s.join(', ') %]
+          [% s.join(', ') | html_entity  %]
       </td>
       </tr>
   [% END %]

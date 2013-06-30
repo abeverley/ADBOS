@@ -1,6 +1,6 @@
 [% INCLUDE header.html %]
 [% IF opdefs %]
-  <h1>[% ship.name %]</h1>
+  <h1>[% ship.name | html_entity %]</h1>
 
   [% IF user.type == "admin" || user.type == "member" %]
   <form id="shiptask" method="POST">
@@ -13,13 +13,13 @@
           [% IF task.id == ship.tasks_id %]
               selected
           [% END %]
-      >[% task.name %]</option>
+      >[% task.name | html_entity %]</option>
       [% END %]
       </select>
       <label class="formstyle" for="Brief priority">Brief priority:</label>
       <input type="text" name="priority" class="formstyle" style="width:50px" value="[% ship.priority %]">
       <label class="formstyle" for="Programme">Programme:</label>
-      <input type="text" name="programme" class="formstyle" style="width:300px" value="[% ship.programme %]">
+      <input type="text" name="programme" class="formstyle" style="width:300px" value="[% ship.programme | html_entity %]">
       <input class="submit" type="submit" value="Update" name="shipupdate">
   </div>
   </form>
@@ -40,14 +40,14 @@
     <tr>
     <td class="opdeflist nowrap"><a href='/opdef/[% opdef.id %]'>[% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %]</a></td>
     <td class="opdeflist nowrap">[% opdef.category.name %]</td>
-    <td class="opdeflist">[% opdef.line5 %]</td>
+    <td class="opdeflist">[% opdef.line5 | html_entity %]</td>
     </tr>
     [% prevtype = opdef.type %]
   [% END %]
   </table>
 [% ELSE %]
   [% FOREACH ship IN ships %]
-  <a href="/ships/[% ship.id %]">[% ship.name %]</a><br />
+  <a href="/ships/[% ship.id %]">[% ship.name | html_entity %]</a><br />
   [% END %]
 [% END %]
 

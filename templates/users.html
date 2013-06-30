@@ -22,16 +22,16 @@
     <form id="loginform" method="POST">
     <div class="form_row">
         <label class="formstyle" for="forename">Firstname:</label>
-        <input class="formstyle" type="textbox" name="forename" value="[% nuser.forename %]">
+        <input class="formstyle" type="textbox" name="forename" value="[% nuser.forename | html_entity %]">
     </div>
     <div class="form_row">
         <label class="formstyle" for="surname">Surname:</label>
-        <input class="formstyle" type="textbox" name="surname" value="[% nuser.surname %]">
+        <input class="formstyle" type="textbox" name="surname" value="[% nuser.surname | html_entity %]">
     </div>
     [% IF action == "create" %]
         <div class="form_row">
             <label class="formstyle" for="username">Username:</label>
-            <input class="formstyle" type="textbox" name="username" value="[% nuser.username %]">
+            <input class="formstyle" type="textbox" name="username" value="[% nuser.username | html_entity %]">
         </div>
     [% END %]
     <div class="form_row">
@@ -63,7 +63,7 @@
     <table class="users">
     [% FOREACH user IN allusers %]
         <tr><td><a href="/users/[% user.id %]">[% user.username %]</a></td>
-            <td>[% user.surname %], [% user.forename %]</td>
+            <td>[% user.surname | html_entity %], [% user.forename | html_entity %]</td>
             <td>[% user.type %]</td>
         </tr>
     [% END %]

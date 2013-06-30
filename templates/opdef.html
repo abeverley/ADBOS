@@ -1,6 +1,6 @@
 [% INCLUDE header.html %]
 
-<h1>[% opdef.ship.name %] [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] (CAT [% opdef.category.name %])</h1>
+<h1>[% opdef.ship.name | html_entity %] [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] (CAT [% opdef.category.name %])</h1>
 
 <div class="content_wrapper">
 
@@ -41,12 +41,12 @@
       [% END %]
 
       [% IF signal %]
-        <pre>[% signal.content %]</pre>
+        <pre>[% signal.content | html_entity %]</pre>
       [% ELSE %]
         [% IF user.type == "admin" || user.type == "member" %]
             <form id="onbrief" method="post">
             [% IF opdef.ship.task.onbrief AND opdef.category.id <= 7 AND opdef.rectified == 0 %]
-              <p>This OPDEF is on the brief for task [% opdef.ship.task.name %]</p>
+              <p>This OPDEF is on the brief for task [% opdef.ship.task.name | html_entity %]</p>
             [% ELSIF opdef.onbrief %]
               <p>This OPDEF is on the brief. <a href="#"
                 onclick="document.getElementById('onbrief').submit();">Click here</a> to remove it from
@@ -61,12 +61,12 @@
             </form>
         [% END %]
         <table class="opdef">
-        <tr><td>Line 5:</td><td>[% opdef.line5 %]</td></tr>
-        <tr><td>ERG code:</td><td>[% opdef.erg_code %]</td></tr>
-        <tr><td>Parent equip:</td><td>[% opdef.parent_equip %]</td></tr>
-        <tr><td class="nowrap">Defective unit:</td><td>[% opdef.defective_unit %]</td></tr>
-        <tr><td>Defect:</td><td>[% opdef.defect %]</td></tr>
-        <tr><td class="nowrap">Latest remarks:</td><td>[% opdef.remarks %]</td></tr>
+        <tr><td>Line 5:</td><td>[% opdef.line5 | html_entity %]</td></tr>
+        <tr><td>ERG code:</td><td>[% opdef.erg_code | html_entity %]</td></tr>
+        <tr><td>Parent equip:</td><td>[% opdef.parent_equip | html_entity %]</td></tr>
+        <tr><td class="nowrap">Defective unit:</td><td>[% opdef.defective_unit | html_entity %]</td></tr>
+        <tr><td>Defect:</td><td>[% opdef.defect | html_entity %]</td></tr>
+        <tr><td class="nowrap">Latest remarks:</td><td>[% opdef.remarks | html_entity %]</td></tr>
         </table>
 
 	[% IF opdef.comments %]
@@ -76,7 +76,7 @@
             [% FOREACH comment IN comments %]
             <tr class="[% zebra %]">
             <td class="top dotted"><strong>[% comment.user.username %]</strong><br />[% comment.time.ymd %]</td>
-            <td class="top dotted">[% FILTER html_line_break %][% comment.comment %][% END %]</td>
+            <td class="top dotted">[% FILTER html_line_break %][% comment.comment | html_entity %][% END %]</td>
             </tr>
             [% IF zebra == "odd" %][% zebra = "even" %][% ELSE %][% zebra = "odd" %][% END %]
             [% END %]

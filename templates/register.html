@@ -21,15 +21,15 @@
     <form id="loginform" method="POST">
     <div class="form_row">
         <label class="formstyle" for="forename">Firstname:</label>
-        <input class="formstyle" type="textbox" name="forename" value="[% nuser.forename %]">
+        <input class="formstyle" type="textbox" name="forename" value="[% nuser.forename | html_entity %]">
     </div>
     <div class="form_row">
         <label class="formstyle" for="surname">Surname:</label>
-        <input class="formstyle" type="textbox" name="surname" value="[% nuser.surname %]">
+        <input class="formstyle" type="textbox" name="surname" value="[% nuser.surname | html_entity %]">
     </div>
     <div class="form_row">
         <label class="formstyle" for="email">Email:</label>
-        <input class="formstyle" type="textbox" name="email" value="[% nuser.email %]">
+        <input class="formstyle" type="textbox" name="email" value="[% nuser.email | html_entity %]">
     </div>
 
     <input class="submit" type="submit" value="Register" name="create">

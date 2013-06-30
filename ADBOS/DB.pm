@@ -39,7 +39,7 @@ sub connect()
     my $dbname = $self->{dbname};
 
     $self->{sch} = ADBOS::Schema->connect(
-      "dbi:mysql:database=$dbname;host=".$self->{dbhost}, $self->{dbuser}, $self->{dbpass}
+      "dbi:mysql:database=$dbname;mysql_enable_utf8=1;host=".$self->{dbhost}, $self->{dbuser}, $self->{dbpass}
      , {RaiseError => 1, AutoCommit => 1, mysql_enable_utf8 => 1}
     ) or error __x"unable to connect to database {name}: {err}"
            , name => $dbname, err => $DBI::errstr;

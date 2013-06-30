@@ -39,7 +39,7 @@
         <form method="post">
         <div class="form_row">
             <div class="floatleft">
-                <textarea class="formstyle" cols="72" rows="35" name="signal">[% view.content %]</textarea>
+                <textarea class="formstyle" cols="72" rows="35" name="signal">[% view.content | html_entity %]</textarea>
             </div>
             <div class="floatleft">
                 <span class="parsenote"><h4>Minimum OPDEF format</h4>

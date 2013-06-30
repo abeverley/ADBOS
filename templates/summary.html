@@ -1,14 +1,12 @@
 [% INCLUDE header.html %]
 
-<!-- [% INCLUDE filter.html %] -->
-
 <p>Showing the 200 most recently updated OPDEFs (in order of last modified)</p>
 
 <div class="summary">
 <table class="opdeflist">
 [% FOREACH opdef IN opdefs %]
 [% IF lastship != opdef.shipname %]
-<tr><td colspan='4'><h2 class="row">[% opdef.shipname %]</h2></td></tr>
+<tr><td colspan='4'><h2 class="row">[% opdef.shipname | html_entity %]</h2></td></tr>
 [% lastship = opdef.shipname %]
 [% END %]
 [% IF opdef.onbrief %]
@@ -24,10 +22,10 @@
 [% ELSE %]
   <tr>
 [% END %]
-<td class="opdeflist nowrap">[% opdef.ship.name %]</td>
+<td class="opdeflist nowrap">[% opdef.ship.name | html_entity %]</td>
 <td class="opdeflist nowrap"><a class="opdef" href='/opdef/[% opdef.id %]'>[% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %]</a></td>
 <td class="opdeflist nowrap">[% opdef.category.name %]</td>
-<td class="opdeflist">[% opdef.line5 %]</td>
+<td class="opdeflist">[% opdef.line5 | html_entity %]</td>
 </tr>
 [% END %]
 </table>
