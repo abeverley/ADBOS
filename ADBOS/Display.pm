@@ -364,8 +364,8 @@ sub tasks($$;$)
     standard_template($file, $vars);
 }
 
-# Used to reset and display a password through the web interface
-sub pwReset($$)
+# Used to manage individual account
+sub myAccount($$)
 {   my ($self,$user,$auth) = @_;
 
     my $q = $self->{qry};
@@ -383,22 +383,38 @@ sub pwReset($$)
         } else {
             $error = "There was an error resetting your password";
         }
+    } elsif ($q->param('update'))
+    {
+        # Need hash with only some of user's keys
+        my $u->{id} = $user->{id};
+        $u->{surname} = $q->param('surname');
+        $u->{forename} = $q->param('forename');
+        if ($db->userUpdate($u))
+        {
+            $success = "Your details have been updated successfully";
+            # Update session variable
+            $user->{surname} = $u->{surname};
+            $user->{forename} = $u->{forename};
+            # Update top-level session variable to ensure $user is stored
+            $auth->session->{time} = time;
+        } else {
+            $error = "There was an error updating your details";
+        }
     } else {
         if ($user->{pwexpired})
         {
-            $message = "Your password has expired. Please use the button to reset your password to a new value.";
-        } else {
-            $message = "Please use the button to reset your password to a new value.";
+            $message = "Your password has expired. Please reset it using the button below.";
         }
     }
 
-    my $file = 'resetpw.html';
+    my $file = 'myaccount.html';
     my $vars =
         {
           error    => $error,
+          user     => $user,
           success  => $success,
           message  => $message,
-          title    => 'Reset Password'
+          title    => 'Manage Account'
         };
     standard_template($file, $vars);
 }

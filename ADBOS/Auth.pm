@@ -59,6 +59,8 @@ sub login()
             my $store->{username} = $user->username;
             $store->{type} = $user->type; # if $user->pwchanged;
             $store->{id} = $user->id; # if $user->pwchanged;
+            $store->{surname} = $user->surname; # if $user->pwchanged;
+            $store->{forename} = $user->forename; # if $user->pwchanged;
             if (my $changed = $user->pwchanged)
             {
                 my $now = DateTime->now(time_zone=>'local');

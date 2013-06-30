@@ -21,7 +21,7 @@ $auth->login if $q->param('login');
 # Check for user login and/or guest access
 my $user = $auth->user;
 # Force user to change password if needed
-$display->resetpw($user, $auth) if ($user && $user->{pwexpired});
+$display->myAccount($user, $auth) if ($user && $user->{pwexpired});
 my $guest = $auth->guest unless $user;
 
 unless ($guest || $user)
@@ -85,10 +85,13 @@ elsif ($req->unparsed_uri =~ m!^/+approve/([a-z0-9]+)!gi)
 elsif ($req->unparsed_uri =~ m!^/+reset/?([a-z0-9]*)!gi && !$q->param('login'))
 {
     # User is resetting password using link
-    $display->pwResetFromCode($1) if $1;
+    $display->pwResetFromCode($1);
+}
+elsif ($req->unparsed_uri =~ m!^/+myaccount/?!gi)
+{
+    # Manage individual account
     $user = $auth->login unless $user;
-    # Reset password once logged in
-    $display->pwReset($user,$auth);
+    $display->myAccount($user,$auth);
 }
 elsif ($req->unparsed_uri =~ m!^/+register/?!gi)
 {
