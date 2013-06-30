@@ -1,0 +1,40 @@
+[% INCLUDE header.html %]
+
+[% IF error %]
+    <div class="error">
+        [% error %]
+    </div>
+[% ELSIF success %]
+    <div class="success">
+        [% success %]
+    </div>
+[% ELSIF message %]
+    <div class="message">
+        [% message %]
+    </div>
+[% END %]
+
+<h2>Account details for [% user.username %]</h2>
+<form id="loginform" method="POST" action="/myaccount">
+<div class="form_row">
+    <label class="formstyle" for="forename">Firstname:</label>
+    <input class="formstyle" type="textbox" name="forename" value="[% user.forename | html_entity %]">
+</div>
+<div class="form_row">
+    <label class="formstyle" for="forename">Surname:</label>
+    <input class="formstyle" type="textbox" name="surname" value="[% user.surname | html_entity %]">
+</div>
+<div class="form_row">
+    <label class="formstyle"></label>
+    <input class="submit tall" type="submit" value="Update" name="update">
+</div>
+
+<h2>Reset password</h2>
+<div>
+<label class="formstyle" for="forename">Password:</label>
+<input class="submit tall" type="submit" value="Reset password"
+name="resetpwself">
+</div>
+</form>
+
+[% INCLUDE footer.html %]
