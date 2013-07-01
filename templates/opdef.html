@@ -85,7 +85,11 @@
 
         <form class="comments" method="POST">
         <div class="padtop">
+        <fieldset> <!-- Hack for IE6 -->
+        <div>
         <textarea class="formstyle comments" name="comment"></textarea><br />
+        </div>
+        </fieldset>
         <input class="submit tall" type="submit" value="Add comment" name="commentnew">
         </div>
         </form>
