@@ -12,8 +12,9 @@
   </form>
   </div>
   <div>
+  <form method="POST">
   <table class="tasks center padtop">
-  <tr><th>On brief</th><th>Name</th><th>Ship(s)</th></tr>
+  <tr><th>On brief</th><th>Name</th><th>Ship(s)</th><th>Order</td></tr>
   [% FOREACH task IN tasks %]
       <tr>
       <td class="center">
@@ -31,9 +32,19 @@
           [% END %]
           [% s.join(', ') | html_entity  %]
       </td>
+      <td>
+          <select name="ordering[% task.id %]">
+          [% FOR i = [1..tasks.size] %]
+              <option value="[% i %]" [% IF i == task.ordering %]selected[% END %]>[% i %]
+              </option>
+          [% END %]
+          </select>
+      </td>
       </tr>
   [% END %]
   </table>
+  <input type="submit" name="update" value="Update" class="submit tall">
+  </form>
  </div>
  
 [% INCLUDE footer.html %]

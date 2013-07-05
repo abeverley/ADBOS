@@ -356,6 +356,15 @@ sub tasks($$;$)
     $db->taskRemoveBrief($q->param('remove'))
         if $q->param('remove');
 
+    if ($q->param('update'))
+    {
+        foreach my $p ($q->param)
+        {
+            $db->taskUpdate($1, { ordering => $q->param($p) })
+                if ( $p =~ /ordering([0-9]+)/);
+        }
+    }
+
     my @alltasks = $db->taskAll;
 
     my $file = 'tasks.html';

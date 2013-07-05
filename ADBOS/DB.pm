@@ -89,7 +89,7 @@ sub opdefBrief($)
           ]
         },
         { prefetch => { ships => {opdefs=>['category', 'comments']} },
-          order_by => [ { '-asc'  => [qw/me.name ships.priority ships.name opdefs.category opdefs.number_year opdefs.number_serial/] },
+          order_by => [ { '-asc'  => [qw/me.ordering me.name ships.priority ships.name opdefs.category opdefs.number_year opdefs.number_serial/] },
                         { '-asc' => 'comments.time' }
                       ]
         }
@@ -593,7 +593,7 @@ sub resetpwCreate($)
 sub taskAll()
 {   my $self = shift;
     my $task_rs = $self->sch->resultset('Task');
-    $task_rs->search({}, {order_by => { '-asc' =>  [ 'me.name' ] }, prefetch => 'ships' })->all;
+    $task_rs->search({}, {order_by => { '-asc' =>  [ 'me.ordering' ] }, prefetch => 'ships' })->all;
 }
 
 sub taskAddBrief($)
@@ -614,6 +614,13 @@ sub taskNew($)
 {   my ($self,$name) = @_;
     my $task_rs = $self->sch->resultset('Task');
     $task_rs->create({ name => $name })->id;
+}
+
+sub taskUpdate($$)
+{   my ($self,$id,$values) = @_;
+    my $task_rs = $self->sch->resultset('Task');
+    my $task = $task_rs->find($id);
+    $task->update($values) if $task;
 }
 
 sub commentNew($$$)

@@ -53,6 +53,11 @@ __PACKAGE__->table("tasks");
   default_value: 0
   is_nullable: 0
 
+=head2 ordering
+
+  data_type: 'integer'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -62,6 +67,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 64 },
   "onbrief",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "ordering",
+  { data_type => "integer", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -94,8 +101,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-05-20 00:21:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:7Sat6RotOHW9OYn4/5faEw
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-07-05 16:15:57
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZS5XXNoyF3/8kiI5fDXKMQ
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
