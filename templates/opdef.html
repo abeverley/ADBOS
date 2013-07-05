@@ -42,6 +42,9 @@
 
       [% IF signal %]
         <pre>[% signal.content | html_entity %]</pre>
+        <form class="comments" method="POST">
+        <input type="submit" name="deletesig" value="Delete Signal" class="submit tall">
+        </form>
       [% ELSE %]
         [% IF user.type == "admin" || user.type == "member" %]
             <form id="onbrief" method="post">

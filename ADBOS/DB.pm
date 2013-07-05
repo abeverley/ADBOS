@@ -652,9 +652,16 @@ sub signalAssociateOpdef($$)
 sub signalDelete($)
 {   my ($self, $signals_id) = @_;
     my $signal_rs = $self->sch->resultset('Signal');
-    my $sig = $signal_rs->find($signals_id);
-    $sig->delete if $sig;
+    if (my $sig = $signal_rs->find($signals_id))
+    {
+        $sig->delete;
+        if ($sig->opdef)
+        {
+            $sig->opdef->delete unless $sig->opdef->signals->count; # Delete OPDEF if no signals attached
+        }
+    }
 }
+
 
 sub signalGet($;$)
 {   my ($self, $id, $unparsed) = @_;

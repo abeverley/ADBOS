@@ -119,6 +119,9 @@ sub opdef($$$;$)
     $db->commentNew($opdefs_id, $user->{id}, $q->param('comment'))
         if $q->param('commentnew');
     
+    $db->signalDelete($signals_id)
+        if $q->param('deletesig');
+    
     $db->opdefSetBrief($opdefs_id, $q->param('onbrief'))
         if defined $self->{qry}->param('onbrief')
         && ($user->{type} eq 'member' || $user->{type} eq 'admin');
