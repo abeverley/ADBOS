@@ -35,7 +35,7 @@ sub _standard_template($;$)
     $vars->{time}   = time;
     $vars->{signal_timeout} = $config->{signal_timeout};
     my $template = Template->new
-       ({INCLUDE_PATH => '/var/www/opdef.andybev.com/templates'});
+       ({INCLUDE_PATH => "$config->{wwwdir}/templates"});
     $template->process($file, $vars)
           or die "Template process failed: " . $template->error();
     exit;

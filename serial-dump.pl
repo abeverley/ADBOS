@@ -34,7 +34,7 @@ $port->read_const_time(1000); # 1 second per unfulfilled "read" call
 my $chars=0;
 my $buffer="";
 
-my $cache = '/var/lib/adbos/incoming';
+my $cache = $config->{queuedir};
 
 while (1) {
     my ($count,$saw)=$port->read(255); # will read _up to_ 255 chars
