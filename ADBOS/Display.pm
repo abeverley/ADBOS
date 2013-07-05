@@ -21,10 +21,19 @@ sub new($$)
     $self;
 }
 
-sub standard_template($;$)
-{
-    my ($file, $vars) = @_;
+sub status($$)
+{   my ($self,$status) = @_;
+    $self->{status} = $status if $status;
+    $self->{status};
+}
 
+sub _standard_template($;$)
+{
+    my ($self, $file, $vars) = @_;
+
+    $vars->{status} = $self->{status};
+    $vars->{time}   = time;
+    $vars->{signal_timeout} = $config->{signal_timeout};
     my $template = Template->new
        ({INCLUDE_PATH => '/var/www/opdef.andybev.com/templates'});
     $template->process($file, $vars)
@@ -35,7 +44,7 @@ sub standard_template($;$)
 sub login($;$)
 {   my ($self, $message) = @_;
     my $vars = { message => $message , title => 'Login' };
-    standard_template('login.html', $vars);
+    $self->_standard_template('login.html', $vars);
 }
 
 sub summary($$)
@@ -108,7 +117,7 @@ sub summary($$)
                  title  => 'OPDEF Summary'
                };
     
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 sub opdef($$$;$)
@@ -144,7 +153,7 @@ sub opdef($$$;$)
           title    => $title
         };
 
-    standard_template('opdef.html', $vars);
+    $self->_standard_template('opdef.html', $vars);
 }
 
 sub brief()
@@ -158,11 +167,10 @@ sub brief()
 
     my $vars =
         { tasks  => $tasks,
-          time   => time,
           period => ($period || 1)
         };
 
-    standard_template('brief.html', $vars);
+    $self->_standard_template('brief.html', $vars);
 }
 
 sub ship($$$)
@@ -219,7 +227,7 @@ sub ship($$$)
           title  => $title
         };
 
-    standard_template('ships.html', $vars);
+    $self->_standard_template('ships.html', $vars);
 }
 
 sub main($)
@@ -231,7 +239,7 @@ sub main($)
           user  => $user,
           title => 'Automatic Database OPDEF System'
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 sub users($$;$)
@@ -342,7 +350,7 @@ sub users($$;$)
           allusers => \@allusers,
           title    => $title
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 sub tasks($$;$)
@@ -377,7 +385,7 @@ sub tasks($$;$)
           tasks => \@alltasks,
           title => 'Tasks'
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 # Used to manage individual account
@@ -432,7 +440,7 @@ sub myAccount($$)
           message  => $message,
           title    => 'Manage Account'
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 # Used to perform a password reset using an emailed link
@@ -463,7 +471,7 @@ sub pwResetFromCode($)
           success  => $success,
           title    => 'Reset Password'
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 # Used to request a password reset via link in email
@@ -502,7 +510,7 @@ sub pwResetRequestEmail($)
           success  => $success,
           title    => 'Reset Password'
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 # Used for users to register themselves
@@ -559,7 +567,7 @@ sub accountRegister($$;$)
           success  => $success,
           title    => 'Account registration'
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 # Used for users to confirm their email address
@@ -590,7 +598,7 @@ sub accountEmailConfirm($)
           success  => $success,
           title    => 'Confirm email address'
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 # Used to approve an account request
@@ -619,7 +627,7 @@ sub accountApprove($)
           user    => $user,
           title   => 'Approve account request'
         };
-    standard_template($file, $vars);
+    $self->_standard_template($file, $vars);
 }
 
 sub syops($)
@@ -634,7 +642,7 @@ sub syops($)
     {
         my $file = 'syops.html';
         my $vars = {title  => 'Agree to SyOps'};
-        standard_template($file, $vars);
+        $self->_standard_template($file, $vars);
     }
 }
 
@@ -684,7 +692,7 @@ sub unparsed($$)
               ,user => $user
              };
 
-  standard_template($file, $vars);
+  $self->_standard_template($file, $vars);
 }
 
 sub signalNew($)
@@ -720,13 +728,13 @@ sub signalNew($)
               ,user => $user
              };
 
-  standard_template($file, $vars);
+  $self->_standard_template($file, $vars);
 }
 
 sub authenticate($)
 {   my ($self, $auth) = @_;
     return if $auth->login;
-    standard_template('login.html');
+    $self->_standard_template('login.html');
 }
 
 

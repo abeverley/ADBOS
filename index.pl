@@ -7,11 +7,18 @@ use lib "/var/www/opdef.andybev.com";
 
 use ADBOS::Auth;
 use ADBOS::Display;
+use ADBOS::DB;
+use ADBOS::Config;
+
+my $config = simple_config;
+my $db     = ADBOS::DB->new($config);
 
 my $req   = shift; # Apache request
 $req->content_type("text/html; charset=utf-8");
 my $q = Apache2::Request->new($req);
 my $display = ADBOS::Display->new($q);
+my $status = $db->statusGet;
+$display->status($status);
 
 my $auth = ADBOS::Auth->new($req);
 

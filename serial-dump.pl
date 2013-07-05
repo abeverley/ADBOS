@@ -5,6 +5,11 @@ use warnings;
 
 use Device::SerialPort;
 use File::Temp qw/tempfile/;
+use ADBOS::DB;
+use ADBOS::Config;
+
+my $config = simple_config;
+my $db     = ADBOS::DB->new($config);
 
 my $port;
 
@@ -50,6 +55,9 @@ while (1) {
             my ($fh) = tempfile(DIR => $cache);
             print $fh $message;
             close $fh;
+            
+            # Update status
+            $db->statusSet({ last_signal => \'NOW()' });
         }
     }
 }

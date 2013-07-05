@@ -216,6 +216,14 @@ td.bottom{
     vertical-align:bottom;
 }
 
+#footer {
+        margin-top: 20px;
+        padding-top: 5px;
+        border-top: 1px solid #ccc;
+        text-align: center; 
+        font-size: 11px;
+}
+
 #menu {
     position: absolute;
     bottom:0;

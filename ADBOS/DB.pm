@@ -623,6 +623,26 @@ sub taskUpdate($$)
     $task->update($values) if $task;
 }
 
+sub statusGet()
+{   my $self = shift;
+    my $status_rs = $self->sch->resultset('Status');
+    my ($s) = $status_rs->search->all;
+#    my $status->{last_signal} = $s->last_signal->month_name;
+#    $status;
+$s;
+}
+
+sub statusSet()
+{   my ($self, $values) = @_;
+    my $status_rs = $self->sch->resultset('Status');
+    if ($status_rs->search->count)
+    {
+        $status_rs->update($values)->id;
+    } else {
+        $status_rs->create($values)->id;
+    }
+}
+
 sub commentNew($$$)
 {   my ($self,$opdefs_id,$users_id,$comment) = @_;
     my $comment_rs = $self->sch->resultset('Comment');
