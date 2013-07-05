@@ -24,9 +24,9 @@
           [% ELSE %]
             [Unknown signal]
           [% END %]
-        </a>
+        </a><br>
         [% IF part.dtg %]
-                ([% part.dtg.strftime('%d%H%MZ %b %y') %])
+                <span class="dtg">([% part.dtg.strftime('%d%H%MZ %b %y') %])</span>
         [% END %]
         </td></tr>
       [% END %]
