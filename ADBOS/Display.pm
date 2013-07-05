@@ -513,15 +513,14 @@ sub accountRegister($$;$)
         $nuser->{username} = $q->param('email');
         $nuser->{type} = 'viewer';
 
-        push @errors, "The email address already exists. Please use the reset password functionality."
-            if $db->userGet({ email => $nuser->{email} });
         push @errors, 'Please enter a valid email address (eg your-role@mod.uk).'
             unless (Email::Valid->address($nuser->{email}));
     }
 
     if (!@errors && $q->param('create'))
     {
-        if (my $id = $db->userCreate($nuser))
+        my $errortxt;
+        if (my $id = $db->userCreate($nuser, \$errortxt))
         {
             my $code = $db->userRequestCode($id);
             if ($code)
@@ -536,7 +535,7 @@ sub accountRegister($$;$)
                                 emailing your confirmation email.";
             }
         } else {
-            push @errors, "There was an error creating the user";
+            push @errors, "There was an error creating the user: $errortxt";
         }
     }
 

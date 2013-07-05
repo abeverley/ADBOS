@@ -437,13 +437,21 @@ sub matdemStore($)
 }
 
 sub userCreate($)
-{   my ($self, $user) = @_;
-    my $user_rs = $self->sch->resultset('User');
+{   my ($self, $user, $errortxt) = @_;
     return unless $user->{username} && $user->{email};
-    return
-        if $user_rs->search({ username => $user->{username} })->count; # Username exists
-    return
-        if $user_rs->search({ email => $user->{email} })->count; # Email exists
+    my $user_rs = $self->sch->resultset('User');
+
+    if (my ($u) = $user_rs->search([ {username => $user->{username}}, {email => $user->{email}} ]))
+    {
+        # Username exists
+        if ($u->enabled)
+        {   $$errortxt = "Username or email address already exists";
+            return;
+        } else {
+            $u->update($user);
+            return $u->id;
+        }
+    }
     $user->{created} = \'NOW()';
     $user_rs->create( $user )->id;
 }
