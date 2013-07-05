@@ -146,7 +146,7 @@ sub opdef($$$;$)
 
 sub brief()
 {   my $self   = shift;
-    my $period = shift // 1;
+    my $period = shift || 1;
 
     $period = int $period; # Should be sanitised on input, but just in case...
     my $q = $self->{qry};
