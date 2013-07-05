@@ -80,11 +80,13 @@ sub opdefBrief($)
     my $task_rs = $self->sch->resultset('Task');
 
     my @opdefs = $task_rs->search(
-        { '-or' => [ 'me.onbrief' => 1, 'opdefs.onbrief' => 1 ],
-          '-or' => [ {'opdefs.category' => {'<=' => 7}, 'opdefs.rectified' => 0}
+        { -and => [
+            [ 'me.onbrief' => 1, 'opdefs.onbrief' => 1 ],
+            [ {'opdefs.category' => {'<=' => 7}, 'opdefs.rectified' => 0}
                     ,{'opdefs.category_prev' => {'<=' => 7}, 'opdefs.category_changed' => {'>' => \"DATE_SUB(NOW(), INTERVAL $period DAY)"} }
                     ,{'opdefs.rectified' => 1, 'opdefs.modified' => {'>' => \"DATE_SUB(NOW(), INTERVAL $period DAY)"} }
-                   ]
+            ]
+          ]
         },
         { prefetch => { ships => {opdefs=>['category', 'comments']} },
           order_by => [ { '-asc'  => [qw/me.name ships.priority ships.name opdefs.category opdefs.number_year opdefs.number_serial/] },
