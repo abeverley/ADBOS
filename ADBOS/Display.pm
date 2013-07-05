@@ -145,9 +145,10 @@ sub opdef($$$;$)
 }
 
 sub brief()
-{   my ($self, $period) = @_;
+{   my $self   = shift;
+    my $period = shift // 1;
 
-    $period = (int $period // 1) || 1; # Should be sanitised on input, but just in case...
+    $period = int $period; # Should be sanitised on input, but just in case...
     my $q = $self->{qry};
 
     my $tasks = $db->opdefBrief($period);
