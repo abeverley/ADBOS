@@ -145,6 +145,12 @@ __PACKAGE__->table("opdefs");
   default_value: 0
   is_nullable: 0
 
+=head2 created
+
+  data_type: 'datetime'
+  datetime_undef_if_invalid: 1
+  is_nullable: 1
+
 =head2 modified
 
   data_type: 'datetime'
@@ -209,6 +215,12 @@ __PACKAGE__->add_columns(
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
   "onbrief",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "created",
+  {
+    data_type => "datetime",
+    datetime_undef_if_invalid => 1,
+    is_nullable => 1,
+  },
   "modified",
   {
     data_type => "datetime",
@@ -332,8 +344,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-07-05 17:39:04
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:wb4zKKHRI5jpHY9Jd4CBTw
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-07-05 18:19:00
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:f/s/Yjsqkilmrm4rA5xT7Q
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

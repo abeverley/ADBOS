@@ -348,7 +348,6 @@ sub opdefStore($$)
             $newdata{ships_id} = $ships_id;
             $opdefs_id = $opdef_rs->create(\%newdata)->id;
             my $opdef = $opdef_rs->find($opdefs_id);
-#            $opdef->update({ modified => \'NOW()' });
         }
     }
     elsif($opdefin->{format} eq 'OPDEF')
@@ -369,6 +368,7 @@ sub opdefStore($$)
             $newdata{ships_id} = $ships_id;
             $opdefs_id = $opdef_rs->create(\%newdata)->id;
             $opdef = $opdef_rs->find($opdefs_id);
+            $opdef->update({ created => \'NOW()' });
         }
 #        $opdef->update({ modified => \'NOW()' });
     }
