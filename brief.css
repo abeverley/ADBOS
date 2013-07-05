@@ -34,15 +34,21 @@ a:hover {
 
 @media screen
 {
-    h3.highlight {
-        background-color:yellow;
+    h3.highlightyellow {
+        background-color:#FFE920;
+    }
+    h3.highlightgreen {
+        background-color:#2DC800;
     }
 }
 
 @media print
 {
-    h3.highlight {
+    h3.highlightyellow {
         border: 1px solid;
+    }
+    h3.highlightgreen {
+        border: 1px dotted;
     }
 }
 
