@@ -40,7 +40,7 @@
     <tr>
     <td class="opdeflist nowrap"><a href='/opdef/[% opdef.id %]'>[% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %]</a></td>
     <td class="opdeflist nowrap">[% opdef.category.name %]</td>
-    <td class="opdeflist">[% opdef.line5 | html_entity %]</td>
+    <td class="opdeflist">[% opdef.line5 | html_entity %] ([% opdef.parent_equip | html_entity %])</td>
     </tr>
     [% prevtype = opdef.type %]
   [% END %]
