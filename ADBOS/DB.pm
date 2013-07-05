@@ -492,7 +492,7 @@ sub userGet($)
 sub userAll()
 {   my $self = shift;
     my $user_rs = $self->sch->resultset('User');
-    $user_rs->search({ deleted => 0 })->all;
+    $user_rs->search({ deleted => 0, enabled => 1 })->all;
 }
 
 sub userRequestCode($)
