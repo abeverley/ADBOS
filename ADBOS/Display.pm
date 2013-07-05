@@ -251,6 +251,7 @@ sub users($$;$)
             $nuser->{username} = $u->username;
             $nuser->{forename} = $u->forename;
             $nuser->{surname} = $u->surname;
+            $nuser->{email} = $u->email;
             $title = "View user ".$u->username;
         }
     }
@@ -271,6 +272,8 @@ sub users($$;$)
             or push @errors, "Please enter a surname";
         $nuser->{forename} = $q->param('forename')
             or push @errors, "Please enter a forename";
+        $nuser->{email} = $q->param('email')
+            or push @errors, "Please enter an email address";
 
         push @errors, "The username already exists"
             if $q->param('create')

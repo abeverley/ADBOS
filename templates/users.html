@@ -21,6 +21,10 @@
     [% END %]
     <form id="loginform" method="POST">
     <div class="form_row">
+        <label class="formstyle" for="forename">Username:</label>
+        <input class="formstyle" type="textbox" name="username" value="[% nuser.username | html_entity %]">
+    </div>
+    <div class="form_row">
         <label class="formstyle" for="forename">Firstname:</label>
         <input class="formstyle" type="textbox" name="forename" value="[% nuser.forename | html_entity %]">
     </div>
@@ -28,12 +32,10 @@
         <label class="formstyle" for="surname">Surname:</label>
         <input class="formstyle" type="textbox" name="surname" value="[% nuser.surname | html_entity %]">
     </div>
-    [% IF action == "create" %]
-        <div class="form_row">
-            <label class="formstyle" for="username">Username:</label>
-            <input class="formstyle" type="textbox" name="username" value="[% nuser.username | html_entity %]">
-        </div>
-    [% END %]
+    <div class="form_row">
+        <label class="formstyle" for="email">Email:</label>
+        <input class="formstyle" type="textbox" name="email" value="[% nuser.email | html_entity %]">
+    </div>
     <div class="form_row">
         <label class="formstyle" for="username">Type:</label>
         <select class="formstyle" name="type">
