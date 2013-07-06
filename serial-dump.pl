@@ -58,6 +58,8 @@ while (1) {
             
             # Update status
             $db->statusSet({ last_signal => \'NOW()' });
+            $db->sequenceSet($1)
+                if ($message =~ m/JCT(\d\d\d)/m);
         }
     }
 }

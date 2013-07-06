@@ -643,6 +643,12 @@ sub statusSet()
     }
 }
 
+sub sequenceSet()
+{   my ($self, $ti) = @_;
+    my $sequence_rs = $self->sch->resultset('Sequence');
+    $sequence_rs->update_or_create({ ti => $ti, received => \'NOW()' });
+}
+
 sub commentNew($$$)
 {   my ($self,$opdefs_id,$users_id,$comment) = @_;
     my $comment_rs = $self->sch->resultset('Comment');
