@@ -1,8 +1,10 @@
 <div id="footer">
-    [% IF status.last_signal.epoch > time - signal_timeout %]
-        <div class="green">Last signal received: [% status.last_signal.strftime("%F %H:%M") %]</red>
-    [% ELSE %]
-        <div class="red">Last signal received: [% status.last_signal.strftime("%F %H:%M") %]</red>
+    [% IF status %]
+        [% IF status.last_signal.epoch > time - signal_timeout %]
+            <div class="green">Last signal received: [% status.last_signal.strftime("%F %H:%M") %]</red>
+        [% ELSE %]
+            <div class="red">Last signal received: [% status.last_signal.strftime("%F %H:%M") %]</red>
+        [% END %]
     [% END %]
 </div>
 
