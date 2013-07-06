@@ -23,7 +23,7 @@ if (not -t STDIN and my $message = do { local $/; <STDIN> })
 }
 
 # Otherwise read files from the cache
-my $cache = '/var/lib/adbos/incoming';
+my $cache = $config->{queuedir};
 
 while (1) {
     # Look for files in cache
