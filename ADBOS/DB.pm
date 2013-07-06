@@ -637,9 +637,9 @@ sub statusSet()
     my $status_rs = $self->sch->resultset('Status');
     if ($status_rs->search->count)
     {
-        $status_rs->update($values)->id;
+        $status_rs->update($values);
     } else {
-        $status_rs->create($values)->id;
+        $status_rs->create($values);
     }
 }
 
