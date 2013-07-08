@@ -89,7 +89,7 @@ sub opdefBrief($)
           ]
         },
         { prefetch => { ships => {opdefs=>['category', 'comments']} },
-          order_by => [ { '-asc'  => [qw/me.ordering me.name ships.priority ships.name opdefs.category opdefs.number_year opdefs.number_serial/] },
+          order_by => [ { '-asc'  => [qw/me.ordering me.name ships.priority ships.name opdefs.type opdefs.number_year opdefs.number_serial/] },
                         { '-asc' => 'comments.time' }
                       ]
         }
