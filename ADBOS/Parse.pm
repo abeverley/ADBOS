@@ -128,7 +128,7 @@ sub parse()
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
                                             (.*?|\n?)      # OPDEF number
-                                               \h+(RECT|RECTIFIED|CANCEL)\h*(?<rectdate>[0-9A-Z\h]*)\.?
+                                               \h+(?<rect>RECT|RECTIFIED|CANCEL)\h*(?<rectdate>[0-9A-Z\h]*)\.?
                          \n?.*\n?.*                                                                 # Allow 2 lines of nonsense
                          \n\h*\^?[AMPN/\.\h]{0,8}1\.?        (?<erg_code>.*?)\.?                                      # ERG code
                          \n\h*2\h*\.?\h*        (?<parent_equip>(.|\n)*?)                                  # Parent equipment
@@ -140,7 +140,7 @@ sub parse()
                          \s?\^?(RMKS)?/?(?<remarks>(.|\n)*)
                     %ix)
     {
-        $values{format} = 'RECT';
+        $values{format} = $+{rect} eq 'CANCEL' ? 'CANCEL' : 'RECT';
         $values{opdef} = $+{opdef};
         $values{type} = $+{type};
         $values{number_serial} = $+{number_serial};

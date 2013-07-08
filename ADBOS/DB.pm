@@ -148,6 +148,14 @@ sub signalProcess($;$$)
                 } else {
                     $$status = "Failed to insert rectified signal for OPDEF ID $opdefs_id";
                 }
+            } elsif ($values->{format} eq 'CANCEL')
+            {
+                if (my $signals_id = $self->signalStore($values->{rawtext}, $opdefs_id, $values->{format}, 0, $signalsid))
+                {
+                    $$status = "Cancelled signal for OPDEF ID $opdefs_id inserted";
+                } else {
+                    $$status = "Failed to insert cancelled signal for OPDEF ID $opdefs_id";
+                }
             } elsif ($values->{format} eq 'SITREP')
             {
                 if (my $signals_id = $self->signalStore($values->{rawtext}, $opdefs_id, $values->{format}, $values->{sitrep}, $signalsid))
@@ -380,7 +388,7 @@ sub opdefStore($$)
         }
 #        $opdef->update({ modified => \'NOW()' });
     }
-    elsif($opdefin->{format} eq 'RECT')
+    elsif($opdefin->{format} eq 'RECT' || $opdefin->{format} eq 'CANCEL')
     {
         my ($opdef) = $opdef_rs->search({ number_year   => $opdefin->{number_year},
                                           number_serial => $opdefin->{number_serial},
@@ -393,7 +401,7 @@ sub opdefStore($$)
         if ($opdefs_id)
         {
             $opdef->update({ rectified => 1 });
-#            $opdef->update({ modified => \'NOW()' });
+            $opdef->update({ cancelled => 1 }) if $opdefin->{format} eq 'CANCEL';
         }
     }
     $opdefs_id;

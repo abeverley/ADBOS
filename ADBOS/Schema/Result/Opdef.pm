@@ -139,6 +139,12 @@ __PACKAGE__->table("opdefs");
   default_value: 0
   is_nullable: 0
 
+=head2 cancelled
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 0
+
 =head2 onbrief
 
   data_type: 'tinyint'
@@ -212,6 +218,8 @@ __PACKAGE__->add_columns(
   "ships_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "rectified",
+  { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "cancelled",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
   "onbrief",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
@@ -344,8 +352,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-07-05 18:19:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:f/s/Yjsqkilmrm4rA5xT7Q
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-07-08 22:04:58
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Thjl1agXDjNHOE822fIA7Q
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
