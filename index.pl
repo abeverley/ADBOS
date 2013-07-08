@@ -77,7 +77,9 @@ elsif ($req->unparsed_uri =~ m!^/+tasks/?([0-9]*)!gi)
 elsif ($req->unparsed_uri =~ m!^/+brief/?([0-9]*)!gi)
 {
     $user = $auth->login if !$user;
-    $display->brief($1);
+    my $period = $1 || 1;
+    my $comments = ($req->unparsed_uri =~ /nocomments/) ? 0 : 1;
+    $display->brief($period, $comments);
 }
 elsif ($req->unparsed_uri =~ m!^/+confirm/([a-z0-9]+)!gi)
 {

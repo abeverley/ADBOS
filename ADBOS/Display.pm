@@ -157,17 +157,17 @@ sub opdef($$$;$)
 }
 
 sub brief()
-{   my $self   = shift;
-    my $period = shift || 1;
+{   my ($self, $period, $comments) = @_;
 
     $period = int $period; # Should be sanitised on input, but just in case...
     my $q = $self->{qry};
 
-    my $tasks = $db->opdefBrief($period);
+    my $tasks = $db->opdefBrief($period, $comments);
 
     my $vars =
-        { tasks  => $tasks,
-          period => ($period || 1)
+        { tasks    => $tasks,
+          period   => ($period || 1),
+          comments => $comments
         };
 
     $self->_standard_template('brief.html', $vars);

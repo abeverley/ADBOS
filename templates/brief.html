@@ -7,7 +7,11 @@
 </head>
 <body>
 
-<div class="homelink"><a href="/">Home</a></div>
+[% IF comments %]
+    <div class="homelink"><a href="./nocomments">No comments</a> | <a href="/">Home</a></div>
+[% ELSE %]
+    <div class="homelink"><a href="/brief/[% period %]">Comments</a> | <a href="/">Home</a></div>
+[% END %]
 
 <div class="body">
 
@@ -31,12 +35,14 @@
                         [% IF opdef.rectified %]<strong>Rectified</strong>[% END %]
                         [% IF opdef.created.epoch > time - 86400 * period %]<strong>New</strong>[% END %]
                	        [% opdef.line5 | html_entity %] ([% opdef.parent_equip | html_entity %])</h3>
-                <div class="comments">
-                [% FOREACH comment IN opdef.comments %]
-                    [% LAST IF loop.index == 10 %]
-                        <p><u>[% comment.time.ymd %] (by [% comment.user.username %])</u>: [% FILTER html_line_break %][% comment.comment | html_entity %][% END %]</p>
+               	[% IF comments %]
+                    <div class="comments">
+                    [% FOREACH comment IN opdef.comments %]
+                        [% LAST IF loop.index == 10 %]
+                            <p><u>[% comment.time.ymd %] (by [% comment.user.username %])</u>: [% FILTER html_line_break %][% comment.comment | html_entity %][% END %]</p>
+                    [% END %]
+                    </div>
                 [% END %]
-                </div>
             [% END %]
             <p>&nbsp;</p>
         [% END %]
