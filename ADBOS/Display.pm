@@ -43,7 +43,7 @@ sub _standard_template($;$)
 
 sub login($;$)
 {   my ($self, $message) = @_;
-    my $vars = { message => $message , title => 'Login' };
+    my $vars = { message => $message , title => 'Login', warning => $config->{login_warning} };
     $self->_standard_template('login.html', $vars);
 }
 
@@ -237,6 +237,7 @@ sub main($)
     my $vars =
         {
           user  => $user,
+          intro => $config->{intro},
           title => 'Automatic Database OPDEF System'
         };
     $self->_standard_template($file, $vars);
