@@ -197,11 +197,13 @@ sub signalOther($;$$)
     # First try signal sender and OPDEF ID
     if (my $values = $parser->otherFm($rawtext))
     {
+        my $defrep = $values->{opdef} eq 'DEFREP' ? 1 : 0;
         ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
-                                          number_serial => $values->{number_serial},
-                                          type          => $values->{type},
-                                          'ship.name'   => $values->{ship}
-                                         } , { join => 'ship' } );
+                                       number_serial => $values->{number_serial},
+                                       type          => $values->{type},
+                                       'ship.name'   => $values->{ship},
+                                       defrep        => $defrep
+                                      } , { join => 'ship' } );
 
         $opdef or $$status = sprintf("Failed to find related OPDEF %s %s %s-%s. ", $values->{ship},
             $values->{type}, $values->{number_serial}, $values->{number_year});
@@ -250,10 +252,12 @@ sub signalOther($;$$)
         # Easy, we've got an OPDEF number to search for
         foreach my $ship (@{$values->{ship}})
         {
+            my $defrep = $values->{opdef} eq 'DEFREP' ? 1 : 0;
             ($opdef) = $opdef_rs->search({ number_year   => $values->{number_year},
                                            number_serial => $values->{number_serial},
                                            type          => $values->{type},
-                                           'ship.name'   => $ship
+                                           'ship.name'   => $ship,
+                                           defrep        => $defrep
                                           } , { join => 'ship' } );
             last if $opdef;
         }
@@ -311,6 +315,8 @@ sub opdefStore($$)
                           line5 defect repair_int assistance assistance_port matdem remarks);
     @newdata{@fields} = undef;
     @newdata{ keys %newdata } = @$opdefin{ keys %newdata };
+    my $defrep = $opdefin->{opdef} eq 'DEFREP' ? 1 : 0;
+    $newdata{defrep} = 1 if $defrep;
 
     # Get the ID of the category
     my $category_rs = $self->sch->resultset('Category');
@@ -324,7 +330,8 @@ sub opdefStore($$)
         my ($opdef) = $opdef_rs->search({ number_year   => $opdefin->{number_year},
                                           number_serial => $opdefin->{number_serial},
                                           type          => $opdefin->{type},
-                                          ships_id      => $ships_id
+                                          ships_id      => $ships_id,
+                                          defrep        => $defrep
                                          });
         $opdefs_id = $opdef->id if $opdef;
 
@@ -359,7 +366,8 @@ sub opdefStore($$)
                                           number_serial => $opdefin->{number_serial},
                                           type          => $opdefin->{type},
                                           ships_id      => $ships_id,
-                                          erg_code      => $opdefin->{erg_code}
+                                          erg_code      => $opdefin->{erg_code},
+                                          defrep        => $defrep
                                          });
         $opdefs_id = $opdef->id if $opdef;
 
@@ -376,8 +384,9 @@ sub opdefStore($$)
     {
         my ($opdef) = $opdef_rs->search({ number_year   => $opdefin->{number_year},
                                           number_serial => $opdefin->{number_serial},
-                                          type     => $opdefin->{type},
-                                          ships_id => $ships_id
+                                          type          => $opdefin->{type},
+                                          ships_id      => $ships_id,
+                                          defrep        => $defrep
                                          });
         $opdefs_id = $opdef->id if $opdef;
 

@@ -38,7 +38,8 @@
       <tr><td colspan="4"><h2 class="row">[% opdef.type %]</h2></td></tr>
     [% END %]
     <tr>
-    <td class="opdeflist nowrap"><a href='/opdef/[% opdef.id %]'>[% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %]</a></td>
+    <td class="opdeflist nowrap"><a href='/opdef/[% opdef.id %]'>[% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %]</a>
+        [% IF opdef.defrep %](DEFREP)[% END %]</td>
     <td class="opdeflist nowrap">[% opdef.category.name %]</td>
     <td class="opdeflist">[% opdef.line5 | html_entity %] ([% opdef.parent_equip | html_entity %])</td>
     </tr>

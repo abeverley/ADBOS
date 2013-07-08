@@ -40,7 +40,7 @@ sub parse()
     $values{dtg} = $+{dtg};
 
     if ($message =~ m% [.\n]*?
-                       \n(OPDEF|DEFREP)\h*/?\h*    (?<type>ME|WE|AR|OP)[\h/]*0*
+                       \n(?<opdef>OPDEF|DEFREP)\h*/?\h*    (?<type>ME|WE|AR|OP)[\h/]*0*
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -62,6 +62,7 @@ sub parse()
                     %ix)
     {
         $values{format} = 'SITREP';
+        $values{opdef} = $+{opdef};
         $values{type} = $+{type};
         $values{number_serial} = $+{number_serial};
         $values{number_year} = $+{number_year};
@@ -81,7 +82,7 @@ sub parse()
         \%values;   
     }
     elsif ($message =~ m% [.\n]*?
-                       \n(OPDEF|DEFREP)\h*/?\h*     (?<type>ME|WE|AR|OP)[\h/]*  # OPDEF number
+                       \n(?<opdef>OPDEF|DEFREP)\h*/?\h*     (?<type>ME|WE|AR|OP)[\h/]*  # OPDEF number
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -102,6 +103,7 @@ sub parse()
                     %ix)
     {
         $values{format} = 'OPDEF';
+        $values{opdef} = $+{opdef};
         $values{type} = $+{type};
         $values{number_serial} = $+{number_serial};
         $values{number_year} = $+{number_year};
@@ -121,7 +123,7 @@ sub parse()
         \%values;   
     }
     elsif ($message =~ m% [.\n]*?
-                         (OPDEF|DEFREP)\h*/?[-\hA-Z]*?    (?<type>ME|WE|AR|OP)[\h/]*      # OPDEF number
+                         (?<opdef>OPDEF|DEFREP)\h*/?[-\hA-Z]*?    (?<type>ME|WE|AR|OP)[\h/]*      # OPDEF number
                                             (?<number_serial>[0-9]+)
                                             [-\h/]+
                                             (?<number_year>[0-9]+)
@@ -139,6 +141,7 @@ sub parse()
                     %ix)
     {
         $values{format} = 'RECT';
+        $values{opdef} = $+{opdef};
         $values{type} = $+{type};
         $values{number_serial} = $+{number_serial};
         $values{number_year} = $+{number_year};
@@ -163,15 +166,16 @@ sub otherFm()
  
     if ($message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*?
                     [\s\.,/]+(?<type>ME|WE|AR|OP)[-\s]*
-                    ((OPDEF|DEFREP)\h+)?
+                    ((?<opdef>OPDEF|DEFREP)\h+)?
                     (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix
                     ||
         $message =~ m!FM\h(?<ship>[\hA-Z0-9]+)(.|\s)*?
-                    ((OPDEF|DEFREP)\h+)?
+                    ((?<opdef>OPDEF|DEFREP)\h+)?
                     (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)
                     \s+(?<type>ME|WE|AR|OP)[-\s]+!ix)
     {
         $values{ship} = $+{ship};
+        $values{opdef} = $+{opdef};
         $values{type} = $+{type};
         $values{number_serial} = $+{number_serial};
         $values{number_year} = $+{number_year};
@@ -192,14 +196,15 @@ sub otherTo()
     my %values;
     # First look for OPDEF number
     if (m![\s\.,/]+(?<type>ME|WE|AR|OP)[-\s]*
-          ((OPDEF|DEFREP)\h+)?
+          ((?<opdef>OPDEF|DEFREP)\h+)?
           (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)!ix
           ||
-        m!((OPDEF|DEFREP)\h+)?
+        m!((?<opdef>OPDEF|DEFREP)\h+)?
           (?<number_serial>[0-9]+) [-\s/]+ (?<number_year>[0-9]+)
           \s+(?<type>ME|WE|AR|OP)[-\s]+!ix)
     {
         $values{ship} = \@ships;
+        $values{opdef} = $+{opdef};
         $values{type} = $+{type};
         $values{number_serial} = $+{number_serial};
         $values{number_year} = $+{number_year};
