@@ -1,0 +1,24 @@
+[% INCLUDE header.html %]
+
+
+<h3>Please enter your login details to continue</h3>
+
+    [% IF message %]
+    <p>[% message %]</p>
+    [% END %]
+
+    <form id="loginform" method="POST" action="?">
+    <div class="form_row">
+        <label class="formstyle" for="username">Username:</label>
+        <input class="formstyle" id="textbox" type="textbox" name="username">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="username">Password:</label>
+        <input class="formstyle" id="textbox" type="password" name="password">
+        <input class="submit tall" type="submit" value="Submit" name="login">
+    </div>
+    </form>
+
+<p>[% warning %]</p>
+
+[% INCLUDE footer.html %]
