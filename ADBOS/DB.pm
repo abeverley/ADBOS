@@ -345,11 +345,11 @@ sub opdefStore($$)
 
         if ($opdefs_id)
         {
-            # First check that the SITREP number is greater than existing ones
+            # First check that the SITREP number is greater than or equal to existing ones
             my $signals_rs = $self->sch->resultset('Signal');
             my $signal = $signals_rs->search({ opdefs_id => $opdefs_id });
 
-            if ($signal->count && $opdefin->{sitrep} > $signal->get_column('sitrep')->max)
+            if ($signal->count && $opdefin->{sitrep} >= $signal->get_column('sitrep')->max)
             {
                 # Only update ODPEF if sitrep is greater
                 # Check change of category
