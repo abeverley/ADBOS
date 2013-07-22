@@ -9,10 +9,10 @@
 <tr><td colspan='4'><h2 class="row">[% opdef.shipname | html_entity %]</h2></td></tr>
 [% lastship = opdef.shipname %]
 [% END %]
-[% IF opdef.onbrief OR (opdef.ship.task.onbrief AND opdef.category.id < 8) %]
-  <tr class="red">
-[% ELSIF opdef.rectified %]
+[% IF opdef.rectified %]
   <tr class="green">
+[% ELSIF opdef.onbrief OR (opdef.ship.task.onbrief AND opdef.category.id < 8) %]
+  <tr class="red">
 [% ELSIF opdef.category.name.substr(0,1) == 'A' %]
   <tr class="orange">
 [% ELSIF opdef.category.name.substr(0,1) == 'B' %]
