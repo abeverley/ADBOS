@@ -5,9 +5,9 @@
 <div class="summary">
 <table class="opdeflist">
 [% FOREACH opdef IN opdefs %]
-[% IF lastship != opdef.shipname %]
-<tr><td colspan='4'><h2 class="row">[% opdef.shipname | html_entity %]</h2></td></tr>
-[% lastship = opdef.shipname %]
+[% IF opdef.modified.day != lastday %]
+<tr><td colspan="4">[% opdef.modified.strftime('%d %b %y') %]</td></tr>
+[% lastday = opdef.modified.day %]
 [% END %]
 [% IF opdef.rectified %]
   <tr class="green">
