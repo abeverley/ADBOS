@@ -7,3 +7,4 @@ cp *.css /var/www/opdef.andybev.com/
 cp images/* /var/www/opdef.andybev.com/images/
 cp index.pl /var/www/opdef.andybev.com/
 cp templates/* /var/www/opdef.andybev.com/templates/
+apache2ctl restart
