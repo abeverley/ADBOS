@@ -351,12 +351,11 @@ sub opdefStore($$)
 
             if ($signal->count && $opdefin->{sitrep} >= $signal->get_column('sitrep')->max)
             {
-                # Only update ODPEF if sitrep is greater
+                # Only update ODPEF if sitrep is greater or equal
                 # Check change of category
                 $opdef->update({ category_prev => $opdef->category, category_changed => \'NOW()' })
-                    if ($newdata{category} ne $opdef->category);
+                    if ($newdata{category} ne $opdef->category->id);
                 $opdef->update(\%newdata);
-#                $opdef->update({ modified => \'NOW()' });
             }
         } else {
             # OPDEF not found. Insert instead.
@@ -379,14 +378,27 @@ sub opdefStore($$)
                                          });
         $opdefs_id = $opdef->id if $opdef;
 
-        if (!$opdefs_id)
+        if ($opdefs_id)
         {
+            # If OPDEF already exists check if any sitreps have been received.
+            # If not, update OPDEF on basis of this signal (may be correction)
+            # Sitrep may have been received before OPDEF, so don't update if one exists
+            my $signals_rs = $self->sch->resultset('Signal');
+            my $signal = $signals_rs->search({ opdefs_id => $opdefs_id });
+
+            unless ($signal->count && $signal->get_column('sitrep')->max)
+            {
+                # Check change of category
+                $opdef->update({ category_prev => $opdef->category, category_changed => \'NOW()' })
+                    if ($newdata{category} ne $opdef->category->id);
+                $opdef->update(\%newdata);
+            }
+        } else {
             $newdata{ships_id} = $ships_id;
             $opdefs_id = $opdef_rs->create(\%newdata)->id;
             $opdef = $opdef_rs->find($opdefs_id);
             $opdef->update({ created => \'NOW()' });
         }
-#        $opdef->update({ modified => \'NOW()' });
     }
     elsif($opdefin->{format} eq 'RECT' || $opdefin->{format} eq 'CANCEL')
     {
