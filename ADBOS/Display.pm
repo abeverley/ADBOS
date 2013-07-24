@@ -209,6 +209,7 @@ sub ship($$$)
         
         $opdefs = $db->opdefSummary(\%where, [ { -asc => 'type' },{ -asc => [qw/number_year number_serial/] } ] );
         $ship = $db->shipGet($ships_id);
+        $self->main if !$ship;
         $title = "OPDEF summary for ".$ship->name;
     }
     else {
