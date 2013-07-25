@@ -55,16 +55,9 @@ sub opdefSummary($$)
 {   my ($self, $search, $sort) = @_;
 
     my $opdef_rs = $self->sch->resultset('Opdef');
-#    my @opdefs = $opdef_rs->search(%$search,
-#        { join     => 'ship',
-#          order_by => { '-desc' =>  [ 'me.modified' ] }
-#        }
-#    )->all;
-
-# my $s = [ { -desc => 'category' }, { -desc => 'modified' } ];
 
     my @opdefs = $opdef_rs->search(%$search,
-        { join     => 'ship',
+        { prefetch => ['category', 'signals', { ship => 'task' } ],
           order_by => $sort,
           rows     => 200
         }
