@@ -761,7 +761,7 @@ sub opdefGet($)
 
     my $opdef_rs = $self->sch->resultset('Opdef');
     my ($opdefs) = $opdef_rs->search({ 'me.id' => $opdefs_id },
-      { prefetch => {signals => 'sigtype'},
+      { prefetch => [ {signals => 'sigtype'}, {'ship' => 'task'}, 'category' ],
         order_by => 'signals.dtg'
       }
     );
