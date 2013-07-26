@@ -57,7 +57,7 @@ sub opdefSummary($$)
     my $opdef_rs = $self->sch->resultset('Opdef');
 
     my @opdefs = $opdef_rs->search(%$search,
-        { prefetch => ['category', 'signals', { ship => 'task' } ],
+        { prefetch => ['category', 'modified_sigtype', 'signals', { ship => 'task' } ],
           order_by => $sort,
           rows     => 200
         }
