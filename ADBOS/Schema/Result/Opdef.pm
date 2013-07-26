@@ -163,6 +163,12 @@ __PACKAGE__->table("opdefs");
   datetime_undef_if_invalid: 1
   is_nullable: 1
 
+=head2 modified_sigtype
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 1
+
 =head2 remarks
 
   data_type: 'text'
@@ -235,6 +241,8 @@ __PACKAGE__->add_columns(
     datetime_undef_if_invalid => 1,
     is_nullable => 1,
   },
+  "modified_sigtype",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "remarks",
   { data_type => "text", is_nullable => 1 },
   "category_prev",
@@ -316,6 +324,26 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 modified_sigtype
+
+Type: belongs_to
+
+Related object: L<ADBOS::Schema::Result::Sigtype>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "modified_sigtype",
+  "ADBOS::Schema::Result::Sigtype",
+  { id => "modified_sigtype" },
+  {
+    is_deferrable => 1,
+    join_type     => "LEFT",
+    on_delete     => "CASCADE",
+    on_update     => "CASCADE",
+  },
+);
+
 =head2 ship
 
 Type: belongs_to
@@ -352,8 +380,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-07-08 22:04:58
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Thjl1agXDjNHOE822fIA7Q
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-07-26 08:07:59
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:o8i8cdt3vCNrdPzAdS5OkA
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

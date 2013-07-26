@@ -99,6 +99,21 @@ __PACKAGE__->add_unique_constraint("name", ["name"]);
 
 =head1 RELATIONS
 
+=head2 opdefs
+
+Type: has_many
+
+Related object: L<ADBOS::Schema::Result::Opdef>
+
+=cut
+
+__PACKAGE__->has_many(
+  "opdefs",
+  "ADBOS::Schema::Result::Opdef",
+  { "foreign.modified_sigtype" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 signals
 
 Type: has_many
@@ -115,8 +130,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-01 18:38:17
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:t99/35iP+HkmDAo1UONn2A
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-07-26 08:07:59
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:zba+5vzaoANBAsRLSc+1Kg
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

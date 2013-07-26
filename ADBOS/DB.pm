@@ -439,7 +439,7 @@ sub signalStore($$;$$$)
     # Finally, update OPDEF modified time
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $opdef = $opdef_rs->find($opdefs_id) if $opdefs_id;
-    $opdef->update({ modified => \'NOW()' }) if $opdef;
+    $opdef->update({ modified => \'NOW()', modified_sigtype => $ss }) if $opdef;
 
     $id;
 }
