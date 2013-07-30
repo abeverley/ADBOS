@@ -174,7 +174,7 @@ sub brief()
 }
 
 sub ship($$$)
-{   my ($self, $user, $ships_id) = @_;
+{   my ($self, $user, $ships_id, $period) = @_;
 
     my $q = $self->{qry};
     
@@ -225,6 +225,7 @@ sub ship($$$)
           all    => $all,
           user   => $user,
           tasks  => \@tasks,
+          period => ($period // 1),
           title  => $title
         };
 
