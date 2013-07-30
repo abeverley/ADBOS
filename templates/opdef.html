@@ -1,6 +1,6 @@
 [% INCLUDE header.html %]
 
-<h1>[% opdef.ship.name | html_entity %] [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] (CAT [% opdef.category.name %])</h1>
+<h1><a href="/ships/[% opdef.ship.id %]">[% opdef.ship.name | html_entity %]</a> [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] (CAT [% opdef.category.name %])</h1>
 
 <div class="content_wrapper">
 
