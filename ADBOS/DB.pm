@@ -467,7 +467,11 @@ sub userCreate($)
     if (my ($u) = $user_rs->search([ {username => $user->{username}}, {email => $user->{email}} ]))
     {
         # Username exists
-        if ($u->enabled)
+        if ($u->deleted)
+        {   $$errortxt = "The username or email already exists within a deleted account";
+            return;
+        }
+        elsif ($u->enabled)
         {   $$errortxt = "Username or email address already exists";
             return;
         } else {
@@ -497,7 +501,7 @@ sub userDelete($)
 {   my ($self, $user) = @_;
     my $user_rs = $self->sch->resultset('User');
     my $u = $user_rs->find( $user );
-    $u->update({ deleted => 1 }) if $u;
+    $u->update({ deleted => 1, enabled => 0 }) if $u;
 }
 
 sub userGet($)

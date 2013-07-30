@@ -28,8 +28,14 @@
         <input class="formstyle" type="textbox" name="surname" value="[% nuser.surname | html_entity %]">
     </div>
     <div class="form_row">
+        <label class="formstyle" for="username">Username:</label>
+        <input class="formstyle" type="textbox" name="username" value="[% nuser.username | html_entity %]">
+        <em style="color:grey">Please keep this role-based and short</em>
+    </div>
+    <div class="form_row">
         <label class="formstyle" for="email">Email:</label>
         <input class="formstyle" type="textbox" name="email" value="[% nuser.email | html_entity %]">
+        <em style="color:grey">Internet email (eg your-role-name@mod.uk)</em>
     </div>
 
     <input class="submit" type="submit" value="Register" name="create">
