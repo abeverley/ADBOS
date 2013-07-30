@@ -34,7 +34,9 @@
                 <a href="/opdef/[% opdef.id %]">OPDEF [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] ([% opdef.category.name %])</a>:
                         [% IF opdef.rectified %]<strong>Rectified</strong>[% END %]
                         [% IF opdef.created.epoch > time - 86400 * period %]<strong>New</strong>[% END %]
-               	        [% opdef.line5 | html_entity %] ([% opdef.parent_equip | html_entity %])</h3>
+               	        [% opdef.line5 | html_entity %] ([% opdef.parent_equip | html_entity %])
+               	        [% IF opdef.modified.epoch > time - 86400 * period %]<em>[% opdef.modified_sigtype.name %]</em>[% END %]
+               	        </h3>
                	[% IF comments %]
                     <div class="comments">
                     [% FOREACH comment IN opdef.comments %]

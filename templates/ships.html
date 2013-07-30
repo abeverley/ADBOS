@@ -34,14 +34,35 @@
   [% END %]
   <table>
   [% FOREACH opdef IN opdefs %]
+
+    [% IF opdef.modified.epoch > time - 86400 * period %]
+      [% highlight = 1 %]
+    [% ELSE %]
+      [% highlight = 0 %]
+    [% END %]
+
     [% IF opdef.type != prevtype %]
       <tr><td colspan="4"><h2 class="row">[% opdef.type %]</h2></td></tr>
     [% END %]
-    <tr>
+
+    [% IF highlight %]
+      [% IF opdef.rectified %]
+        <tr class="green">
+      [% ELSE %]
+        <tr class="yellow">
+      [% END %]
+    [% ELSE %]
+      <tr>
+    [% END %]
+
     <td class="opdeflist nowrap"><a href='/opdef/[% opdef.id %]'>[% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %]</a>
         [% IF opdef.defrep %](DEFREP)[% END %]</td>
     <td class="opdeflist nowrap">[% opdef.category.name %]</td>
-    <td class="opdeflist">[% opdef.line5 | html_entity %] ([% opdef.parent_equip | html_entity %])</td>
+    <td class="opdeflist">[% opdef.line5 | html_entity %] ([% opdef.parent_equip | html_entity %])
+    [% IF highlight %]
+      <em>[% opdef.modified_sigtype.name %]</em>
+    [% END %]
+    </td>
     </tr>
     [% prevtype = opdef.type %]
   [% END %]

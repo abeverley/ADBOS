@@ -109,12 +109,13 @@ sub summary($$)
     
     my $file = 'summary.html';
     my $opdefs = $db->opdefSummary(\%search, \@sort);
-    my $vars = { opdefs => $opdefs,
-                 search => \%search,
-                 fields => \%fields,
-                 sort => \@sort,
-                 user => $user,
-                 title  => 'OPDEF Summary'
+    my $vars = { opdefs  => $opdefs,
+                 search  => \%search,
+                 fields  => \%fields,
+                 sort    => \@sort,
+                 user    => $user,
+                 refresh => 1,
+                 title   => 'OPDEF Summary'
                };
     
     $self->_standard_template($file, $vars);
@@ -174,7 +175,7 @@ sub brief()
 }
 
 sub ship($$$)
-{   my ($self, $user, $ships_id) = @_;
+{   my ($self, $user, $ships_id, $period) = @_;
 
     my $q = $self->{qry};
     
@@ -225,6 +226,7 @@ sub ship($$$)
           all    => $all,
           user   => $user,
           tasks  => \@tasks,
+          period => ($period // 1),
           title  => $title
         };
 

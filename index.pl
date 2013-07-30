@@ -45,9 +45,9 @@ elsif ($req->unparsed_uri =~ m!^/+opdef/?([0-9]*)/?([0-9]*)!gi)
     $user = $auth->login if !$user;
     $display->opdef($user, $1, $2);
 }
-elsif ($req->unparsed_uri =~ m!^/+ships/?([0-9]*/?([0-9]*))!gi)
+elsif ($req->unparsed_uri =~ m!^/+ships/?([0-9]*/?([0-9]*)/?([0-9]*))!gi)
 {
-    $display->ship($user, $1)
+    $display->ship($user, $1, $2)
 }
 elsif ($req->unparsed_uri =~ m!^/+unparsed/?(new|[0-9]*)!gi)
 {
