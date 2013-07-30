@@ -65,7 +65,6 @@ you must first perform a password reset using the link below:
 $link
 
 Please note: the link can only be used once.
-Your username is $recipient
 __EMAIL
  
     my $subject = 'ADBOS account approved';
@@ -96,12 +95,15 @@ sub emailApprove($$)
     my $surname = $user->surname;
     my $forename = $user->forename;
     my $email = $user->email;
+    my $username = $user->username;
     
     my $body = << "__EMAIL";
 The following person has requested an ADBOS account. Please click the 
 link to approve the request or delete this email to ignore.
 
-$surname, $forename ($email)
+Name: $surname, $forename
+Email: $email
+Username: $username
 
 $link
 __EMAIL

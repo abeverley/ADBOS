@@ -528,17 +528,20 @@ sub accountRegister($$;$)
     
     if ($q->param('create'))
     {
+        $nuser->{username} = $q->param('username')
+            or push @errors, "Please enter a username";
         $nuser->{surname} = $q->param('surname')
             or push @errors, "Please enter a surname";
         $nuser->{forename} = $q->param('forename')
             or push @errors, "Please enter a forename";
         $nuser->{email} = $q->param('email')
             or push @errors, "Please enter an email address";
-        $nuser->{username} = $q->param('email');
         $nuser->{type} = 'viewer';
 
         push @errors, 'Please enter a valid email address (eg your-role@mod.uk).'
             unless (Email::Valid->address($nuser->{email}));
+        push @errors, 'Please enter a username consisting of only alphanumeric characters and hyphens'
+            unless ($nuser->{username} =~ /^[-a-z0-9].*$/i);
     }
 
     if (!@errors && $q->param('create'))
