@@ -298,15 +298,17 @@ sub users($$;$)
     {
         if ($q->param('create'))
         {
-            $user->{password} = $auth->password;
-            if($db->userCreate($nuser))
+            my $errortxt;
+            $nuser->{enabled} = 1;
+            if(my $uid = $db->userCreate($nuser, \$errortxt))
             {
-                $success = "The user was created succesfully with the password <strong>$user->{password}</strong>";
+                my $pw = $auth->resetpw($uid);
+                $success = "The user was created succesfully with the password <strong>$pw</strong>";
                 $action = undef;
             }
             else {
                 $action = 'create';
-                push @errors, "There was an error creating the user";
+                push @errors, "There was an error creating the user: $errortxt";
             }
         } elsif ($q->param('update'))
         {
