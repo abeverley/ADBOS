@@ -75,7 +75,6 @@ sub opdefBrief($)
     my @opdefs = $task_rs->search(
         { -and => [
             [ 'me.onbrief' => 1, 'opdefs.onbrief' => 1 ],
-            [ 'opdefs.category_prev' => {'<=' => 7} ],
             [ {'opdefs.category' => {'<=' => 7}, 'opdefs.rectified' => 0}
              ,{'opdefs.category_prev' => {'<=' => 7}, 'opdefs.category_changed' => {'>' => \"DATE_SUB(UTC_TIMESTAMP(), INTERVAL $period DAY)"} }
              ,{'opdefs.category' => {'<=' => 7}, 'opdefs.rectified' => 1, 'opdefs.modified' => {'>' => \"DATE_SUB(UTC_TIMESTAMP(), INTERVAL $period DAY)"} }
