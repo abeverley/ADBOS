@@ -77,8 +77,8 @@ sub opdefBrief($)
             [ 'me.onbrief' => 1, 'opdefs.onbrief' => 1 ],
             [ 'opdefs.category_prev' => {'<=' => 7} ],
             [ {'opdefs.category' => {'<=' => 7}, 'opdefs.rectified' => 0}
-             ,{'opdefs.category_prev' => {'<=' => 7}, 'opdefs.category_changed' => {'>' => \"DATE_SUB(NOW(), INTERVAL $period DAY)"} }
-             ,{'opdefs.category' => {'<=' => 7}, 'opdefs.rectified' => 1, 'opdefs.modified' => {'>' => \"DATE_SUB(NOW(), INTERVAL $period DAY)"} }
+             ,{'opdefs.category_prev' => {'<=' => 7}, 'opdefs.category_changed' => {'>' => \"DATE_SUB(UTC_TIMESTAMP(), INTERVAL $period DAY)"} }
+             ,{'opdefs.category' => {'<=' => 7}, 'opdefs.rectified' => 1, 'opdefs.modified' => {'>' => \"DATE_SUB(UTC_TIMESTAMP(), INTERVAL $period DAY)"} }
             ]
           ]
         },
@@ -347,7 +347,7 @@ sub opdefStore($$)
             {
                 # Only update ODPEF if sitrep is greater or equal
                 # Check change of category
-                $opdef->update({ category_prev => $opdef->category, category_changed => \'NOW()' })
+                $opdef->update({ category_prev => $opdef->category, category_changed => \'UTC_TIMESTAMP()' })
                     if ($newdata{category} ne $opdef->category->id);
                 $opdef->update(\%newdata);
             }
@@ -383,7 +383,7 @@ sub opdefStore($$)
             unless ($signal->count && $signal->get_column('sitrep')->max)
             {
                 # Check change of category
-                $opdef->update({ category_prev => $opdef->category, category_changed => \'NOW()' })
+                $opdef->update({ category_prev => $opdef->category, category_changed => \'UTC_TIMESTAMP()' })
                     if ($newdata{category} ne $opdef->category->id);
                 $opdef->update(\%newdata);
             }
@@ -391,7 +391,7 @@ sub opdefStore($$)
             $newdata{ships_id} = $ships_id;
             $opdefs_id = $opdef_rs->create(\%newdata)->id;
             $opdef = $opdef_rs->find($opdefs_id);
-            $opdef->update({ created => \'NOW()' });
+            $opdef->update({ created => \'UTC_TIMESTAMP()' });
         }
     }
     elsif($opdefin->{format} eq 'RECT' || $opdefin->{format} eq 'CANCEL')
@@ -440,7 +440,7 @@ sub signalStore($$;$$$)
     # Finally, update OPDEF modified time
     my $opdef_rs = $self->sch->resultset('Opdef');
     my $opdef = $opdef_rs->find($opdefs_id) if $opdefs_id;
-    $opdef->update({ modified => \'NOW()', modified_sigtype => $ss }) if $opdef;
+    $opdef->update({ modified => \'UTC_TIMESTAMP()', modified_sigtype => $ss }) if $opdef;
 
     $id;
 }
@@ -479,7 +479,7 @@ sub userCreate($)
             return $u->id;
         }
     }
-    $user->{created} = \'NOW()';
+    $user->{created} = \'UTC_TIMESTAMP()';
     $user_rs->create( $user )->id;
 }
 
@@ -494,7 +494,7 @@ sub userLogin($)
 {   my ($self, $user) = @_;
     my $user_rs = $self->sch->resultset('User');
     my $u = $user_rs->find({ id => $user, deleted => 0 });
-    $u->update({ lastlogin => \'NOW()'}) if $u;
+    $u->update({ lastlogin => \'UTC_TIMESTAMP()'}) if $u;
 }
 
 sub userDelete($)
@@ -673,7 +673,7 @@ sub statusSet()
 sub sequenceSet()
 {   my ($self, $ti) = @_;
     my $sequence_rs = $self->sch->resultset('Sequence');
-    $sequence_rs->update_or_create({ ti => $ti, received => \'NOW()' });
+    $sequence_rs->update_or_create({ ti => $ti, received => \'UTC_TIMESTAMP()' });
 }
 
 sub commentNew($$$)
@@ -682,7 +682,7 @@ sub commentNew($$$)
     $comment_rs->create({ comment   => $comment,
                           opdefs_id => $opdefs_id,
                           users_id  => $users_id,
-                          time      => \'NOW()'
+                          time      => \'UTC_TIMESTAMP()'
                         })->id;
 }
 
