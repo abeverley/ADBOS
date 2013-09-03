@@ -127,10 +127,10 @@ sub opdef($$$;$)
     my $q = $self->{qry};
 
     $db->commentNew($opdefs_id, $user->{id}, $q->param('comment'))
-        if $q->param('commentnew');
+        if $q->param('commentnew') && ($user->{type} eq 'member' || $user->{type} eq 'admin');
     
     $db->signalDelete($signals_id)
-        if $q->param('deletesig');
+        if $q->param('deletesig') && ($user->{type} eq 'member' || $user->{type} eq 'admin');
     
     $db->opdefSetBrief($opdefs_id, $q->param('onbrief'))
         if defined $self->{qry}->param('onbrief')
