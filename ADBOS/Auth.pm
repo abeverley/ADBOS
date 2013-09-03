@@ -66,7 +66,7 @@ sub login()
                 my $now = DateTime->now(time_zone=>'local');
                 my $days = $changed->delta_days($now); # Returns object
                 my $d = DateTime::Format::Duration->new( pattern => '%e' ); # No of days
-                $store->{pwexpired} = 1 if ($d->format_duration($days) > 180);
+                $store->{pwexpired} = 1 if ($d->format_duration($days) > $config->{pw_change});
             } else {
                 # Never changed
                 $store->{pwexpired} = 1;
