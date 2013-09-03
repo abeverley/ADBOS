@@ -299,7 +299,7 @@ sub users($$;$)
         if ($q->param('create'))
         {
             $user->{password} = $auth->password;
-            if(db->userCreate($nuser))
+            if($db->userCreate($nuser))
             {
                 $success = "The user was created succesfully with the password <strong>$user->{password}</strong>";
                 $action = undef;
