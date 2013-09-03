@@ -126,7 +126,7 @@ sub resetpw($;$)
     my $update = { id => $user, password => $coded};
     if ($logchange)
     {
-        $update->{pwchanged} = \'NOW()'; # Password changed by user
+        $update->{pwchanged} = \'UTC_TIMESTAMP()'; # Password changed by user
     }
     else {
         $update->{pwchanged} = undef; # Force pw change on login
