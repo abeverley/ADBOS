@@ -66,7 +66,7 @@ sub login()
                 my $now = DateTime->now(time_zone=>'local');
                 my $days = $changed->delta_days($now); # Returns object
                 my $d = DateTime::Format::Duration->new( pattern => '%e' ); # No of days
-                $store->{pwexpired} = 1 if ($d->format_duration($days) > 180);
+                $store->{pwexpired} = 1 if ($d->format_duration($days) > $config->{pw_change});
             } else {
                 # Never changed
                 $store->{pwexpired} = 1;
@@ -126,7 +126,7 @@ sub resetpw($;$)
     my $update = { id => $user, password => $coded};
     if ($logchange)
     {
-        $update->{pwchanged} = \'NOW()'; # Password changed by user
+        $update->{pwchanged} = \'UTC_TIMESTAMP()'; # Password changed by user
     }
     else {
         $update->{pwchanged} = undef; # Force pw change on login

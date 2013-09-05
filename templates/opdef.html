@@ -42,9 +42,11 @@
 
       [% IF signal %]
         <pre>[% signal.content | html_entity %]</pre>
-        <form class="comments" method="POST">
-        <input type="submit" name="deletesig" value="Delete Signal" class="submit tall">
-        </form>
+        [% IF user.type == "admin" || user.type == "member" %]
+          <form class="comments" method="POST">
+          <input type="submit" name="deletesig" value="Delete Signal" class="submit tall">
+          </form>
+        [% END %]
       [% ELSE %]
         [% IF user.type == "admin" || user.type == "member" %]
             <form id="onbrief" method="post">
@@ -86,16 +88,18 @@
             </table>
         [% END %]
 
-        <form class="comments" method="POST">
-        <div class="padtop">
-        <fieldset style="border:0px;padding:0px"> <!-- Hack for IE6 -->
-        <div>
-        <textarea class="formstyle comments" name="comment"></textarea><br />
-        </div>
-        </fieldset>
-        <input class="submit tall" type="submit" value="Add comment" name="commentnew">
-        </div>
-        </form>
+        [% IF user.type == "admin" || user.type == "member" %]
+          <form class="comments" method="POST">
+          <div class="padtop">
+          <fieldset style="border:0px;padding:0px"> <!-- Hack for IE6 -->
+          <div>
+          <textarea class="formstyle comments" name="comment"></textarea><br />
+          </div>
+          </fieldset>
+          <input class="submit tall" type="submit" value="Add comment" name="commentnew">
+          </div>
+          </form>
+        [% END %]
         
       [% END %]
   </div>
