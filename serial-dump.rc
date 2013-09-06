@@ -13,7 +13,6 @@
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 NAME=serial-dump
 DAEMON=/usr/local/opdef/$NAME
-DAEMON=/var/www/opdef.andybev.com/$NAME
 SNAME=serial-dump # Name of script
 DESC="ADBOS signal dump script"
 PIDFILE="/var/run/$NAME.pid"

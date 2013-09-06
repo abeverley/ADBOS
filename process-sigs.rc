@@ -13,7 +13,6 @@
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 NAME=process-sigs
 DAEMON=/usr/local/opdef/$NAME
-DAEMON=/var/www/opdef.andybev.com/$NAME
 SNAME=process-sigs # Name of script
 DESC="ADBOS signal dump script"
 PIDFILE="/var/run/$NAME.pid"
