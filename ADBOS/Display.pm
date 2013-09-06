@@ -21,7 +21,7 @@ sub new($$)
     $self;
 }
 
-sub status($$)
+sub status($)
 {   my ($self,$status) = @_;
     $self->{status} = $status if $status;
     $self->{status};

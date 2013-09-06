@@ -458,6 +458,12 @@ sub matdemStore($)
     $matdem_rs->create({ content => $content })->id;
 }
 
+sub log($$)
+{   my ($self, $source, $message) = @_;
+    my $log_rs = $self->sch->resultset('Log');
+    $log_rs->create({ source => $source, message => $message, time => \'UTC_TIMESTAMP()', users_id => $self->user->{id} })->id;
+}
+
 sub userCreate($)
 {   my ($self, $user, $errortxt) = @_;
     return unless $user->{username} && $user->{email};
