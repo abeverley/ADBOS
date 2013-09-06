@@ -112,6 +112,11 @@ elsif ($req->unparsed_uri =~ m!^/+emailpw/?!gi && !$user)
     # Request password reset
     $display->pwResetRequestEmail;
 }
+elsif ($req->unparsed_uri =~ m!^/+status/?!gi)
+{
+    # Show status
+    $display->sequence;
+}
 else
 {
     $display->main($user);

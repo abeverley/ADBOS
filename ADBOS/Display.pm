@@ -656,6 +656,16 @@ sub syops($)
 }
 
 
+sub sequence()
+{   my ($self) = @_;
+
+    my @sigs = $db->sequenceGet;
+    my $file = 'status.html';
+    my $vars = {title  => 'System Status', sigs => \@sigs};
+    $self->_standard_template($file, $vars);
+}
+
+
 sub unparsed($$)
 {
   my ($self, $user, $id) = @_;

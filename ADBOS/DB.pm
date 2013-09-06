@@ -622,6 +622,12 @@ sub resetpwCreate($)
     $user->update({ resetpw => $code }) ? $code : 0;
 }
 
+sub sequenceGet()
+{   my $self = shift;
+    my $sequence_rs = $self->sch->resultset('Sequence');
+    $sequence_rs->search()->all;
+}
+
 sub taskAll()
 {   my $self = shift;
     my $task_rs = $self->sch->resultset('Task');
