@@ -1,0 +1,100 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use ADBOS::DB;
+use ADBOS::Parse;
+use ADBOS::Config;
+use File::Slurp;
+use Any::Daemon;
+use Log::Report      qw(adbos);
+
+sub process($;$);
+
+my $config = simple_config;
+
+my $parser = ADBOS::Parse->new();
+my $db     = ADBOS::DB->new($config);
+
+# See if text is being piped in. If so, read it
+if (not -t STDIN and my $message = do { local $/; <STDIN> })
+{
+    process($message);
+    exit;
+}
+
+# Otherwise read files from the cache
+my $cache = $config->{queuedir};
+
+my $daemon = Any::Daemon->new
+  ( user     => $config->{user}
+  , group    => $config->{group}
+  , pid_file => $config->{pidprocess}
+  , workdir  => $cache
+  );
+
+dispatcher SYSLOG => 'syslog'
+  , identity => 'process-sigs'
+  , facility => "local0"
+  , flags    => "pid ndelay nowait"
+  , mode     => 1;
+ 
+info __x"Waiting to process signals in $cache...";
+
+$daemon->run
+  ( max_childs => 1
+  , child_task => \&process_sigs
+  );
+
+sub process_sigs()
+{
+    while (1) {
+        # Look for files in cache
+        my $dh;
+        opendir($dh, $cache);
+        while (defined(my $f = readdir($dh)))
+        {
+            my $file = "$cache/$f";
+            next unless -f $file;
+            if (my $message = read_file($file))
+            {
+                process($message, $f);
+                unlink $file;
+            }
+        }
+        close $dh;
+        sleep 1;
+    }
+}
+
+sub process($;$)
+{
+    my ($message,$f) = @_;
+
+    if ($f)
+    {
+        info __x"Attempting to parse message for file $f";
+    } else {
+        info __x"Attempting to parse message ";
+    }
+
+    # Clean up extra line breaks
+    $message =~ s/\r*//g;
+    
+    if ($message =~ /^CHANNEL CHECK$/m)
+    { # Ignore for the moment
+      # XXXX Log in DB in future
+    }
+    elsif (my $values =  $parser->parse($message))
+    {
+        my $status;
+        $db->signalProcess($values, \$status);
+        info __x"$status";
+    } elsif ($db->signalOther($message)) {
+        info __x"Parsed signal as an associated signal";
+    } else {
+        $db->signalStore($message);
+        info __x"Parse failed";
+    }
+}
