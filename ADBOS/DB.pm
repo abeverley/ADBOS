@@ -625,7 +625,7 @@ sub resetpwCreate($)
 sub sequenceGet()
 {   my $self = shift;
     my $sequence_rs = $self->sch->resultset('Sequence');
-    $sequence_rs->search()->all;
+    $sequence_rs->search({}, {order_by => { '-desc' =>  [ 'me.received' ] }})->all;
 }
 
 sub taskAll()
