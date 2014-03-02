@@ -10,6 +10,8 @@ use ADBOS::Parse;
 use ADBOS::Config;
 use ADBOS::Email;
 use Email::Valid;
+use Apache::Solr           ();
+use Apache::Solr::Document ();
 
 my $config = simple_config;
 my $db     = ADBOS::DB->new($config);
@@ -45,6 +47,115 @@ sub login($;$)
 {   my ($self, $message) = @_;
     my $vars = { message => $message , title => 'Login', warning => $config->{login_warning} };
     $self->_standard_template('login.html', $vars);
+}
+
+sub search($$)
+{   my ($self, $user) = @_;
+    my $q = $self->{qry};
+    
+    my $url  = $config->{solrurl};
+    my $solr = Apache::Solr->new(server => $url);
+
+    my $file = 'search.html';
+
+    my @searchq; my @uq;
+    if ($q->param('type'))
+    {
+        push @searchq, {field => 'type', value => uc $q->param('type')};
+    }
+    if ($q->param('ship'))
+    {
+        push @searchq, {field => 'ship', value => uc $q->param('ship')};
+    }
+    if ($q->param('number_year'))
+    {
+        push @searchq, {field => 'number_year', value => $q->param('number_year')};
+    }
+    if ($q->param('number_serial'))
+    {
+        push @searchq, {field => 'number_serial', value => $q->param('number_serial')};
+    }
+    if ($q->param('category'))
+    {
+        push @searchq, {field => 'category', value => uc $q->param('category')};
+    }
+    if ($q->param('defective_unit'))
+    {
+        push @searchq, {field => 'defective_unit', value => $q->param('defective_unit')};
+    }
+    if ($q->param('line5'))
+    {
+        push @searchq, {field => 'line5', value => $q->param('line5')};
+    }
+    if ($q->param('assistance_port'))
+    {
+        push @searchq, {field => 'assistance_port', value => $q->param('assistance_port')};
+    }
+    if ($q->param('remarks'))
+    {
+        push @searchq, {field => 'remarks', value => $q->param('remarks')};
+    }
+    if ($q->param('assistance'))
+    {
+        push @searchq, {field => 'assistance', value => $q->param('assistance')};
+    }
+    if ($q->param('repair_int'))
+    {
+        push @searchq, {field => 'repair_int', value => $q->param('repair_int')};
+    }
+    if ($q->param('defect'))
+    {
+        push @searchq, {field => 'defect', value => $q->param('defect')};
+    }
+    if ($q->param('parent_equip'))
+    {
+        push @searchq, {field => 'parent_equip', value => $q->param('parent_equip')};
+    }
+    if ($q->param('erg_code'))
+    {
+        push @searchq, {field => 'erg_code', value => $q->param('erg_code')};
+    }
+    if($q->param('signal'))
+    {
+        push @searchq, {field => 'signal', value => $q->param('signal')};
+    }
+
+    unless (@searchq)
+    {
+        my $vars = { 
+                     user    => $user,
+                     title   => 'OPDEF Search'
+                   };
+        $self->_standard_template($file, $vars);
+    }
+
+    my $searchq = join ' AND ', map { $_->{field}.":(".$_->{value}.")"} @searchq;
+    my $uriq = join '&', map { $_->{field}."=".$_->{value}} @searchq;
+    my $sort = $q->param('sort') eq 'date' ? 'modified' : 'score';
+    my $results = $solr->select(q => "{!q.op=AND}$searchq", sort => "$sort desc", hl => {fl=>'signal'});
+    my @opdefs;
+    while(my $doc = $results->nextSelected)
+    {
+        my $hldoc = $results->highlighted($doc);
+        my $opdef;
+        $opdef->{id} = $doc->_id;
+        $opdef->{line5} = $doc->_line5;
+        $opdef->{type}  = $doc->_type;
+        $opdef->{number_serial} = $doc->_number_serial;
+        $opdef->{number_year} = $doc->_number_year;
+        $opdef->{ship} = $doc->_ship;
+        $opdef->{modified} = $doc->_modified;
+        $opdef->{highlight} = $hldoc->_signal;
+        push @opdefs, $opdef;
+    }
+
+    my $vars = { opdefs  => \@opdefs,
+                 user    => $user,
+                 title   => 'OPDEF Search',
+                 uriq    => $uriq,
+               };
+    
+    $self->_standard_template($file, $vars);
 }
 
 sub summary($$)

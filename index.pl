@@ -36,7 +36,11 @@ unless ($guest || $user)
     $guest = $display->syops($auth);
 }
 
-if ($req->unparsed_uri =~ m!^/+summary/?!gi)
+if ($req->unparsed_uri =~ m!^/+search/?!gi)
+{
+    $display->search($user);
+}
+elsif ($req->unparsed_uri =~ m!^/+summary/?!gi)
 {
     $display->summary($user);
 }

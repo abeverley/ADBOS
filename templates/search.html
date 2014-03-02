@@ -1,0 +1,85 @@
+[% INCLUDE header.html %]
+
+[% IF opdefs.defined %]
+    <h2>Search results</h2>
+    <p>
+    <a href="/search?[% uriq %]&sort=score">Sort by relevance</a> | <a href="/search?[% uriq %]&sort=date">Sort by date</a> | <a href="/search">Advanced search</a>
+    </p>
+    <div>
+        [% IF opdefs.size %]
+            [% FOR opdef IN opdefs %]
+            <p><a href="/opdef/[% opdef.id %]">[% opdef.ship %] [% opdef.type %] [% opdef.number_serial %]-[% opdef.number_year %] ([% opdef.line5 %])</a><br>
+                [% opdef.highlight %] [% opdef.modified %]</p>
+            [% END %]
+        [% ELSE %]
+            <p>No results</p>
+        [% END %]
+    </div>
+[% ELSE %]
+    <p>To perform a single character wildcard search use the "?" symbol. To perform a multiple character wildcard search use the "*" symbol.</p>
+    <form method="GET" action="/search">
+    <div class="form_row">
+        <label class="formstyle" for="type">Type:</label>
+        <input class="formstyle" id="type" type="textbox" name="type">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="ship">Ship:</label>
+        <input class="formstyle" id="ship" type="textbox" name="ship">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="number_year">Year:</label>
+        <input class="formstyle" id="number_year" type="textbox" name="number_year">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="number_serial">Serial:</label>
+        <input class="formstyle" id="number_serial" type="textbox" name="number_serial">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="category">Category:</label>
+        <input class="formstyle" id="category" type="textbox" name="category">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="erg_code">ERG code:</label>
+        <input class="formstyle" id="erg_code" type="textbox" name="erg_code">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="parent_equip">Parent equipment:</label>
+        <input class="formstyle" id="parent_equip" type="textbox" name="parent_equip">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="defective_unit">Defective unit:</label>
+        <input class="formstyle" id="defective_unit" type="textbox" name="defective_unit">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="line5">Line 5:</label>
+        <input class="formstyle" id="line5" type="textbox" name="line5">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="defect">Defect:</label>
+        <input class="formstyle" id="defect" type="textbox" name="defect">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="repair_int">Repair intentions:</label>
+        <input class="formstyle" id="repair_int" type="textbox" name="repair_int">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="assistance">Assistance:</label>
+        <input class="formstyle" id="assistance" type="textbox" name="assistance">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="assistance_port">Assistance port:</label>
+        <input class="formstyle" id="assistance_port" type="textbox" name="assistance_port">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="remarks">Remarks:</label>
+        <input class="formstyle" id="remarks" type="textbox" name="remarks">
+    </div>
+    <div class="form_row">
+        <label class="formstyle" for="signal">Signal text:</label>
+        <input class="formstyle" id="signal" type="textbox" name="signal">
+        <input class="submit tall" type="submit" value="Search" name="search">
+    </div>
+    </form>
+[% END %]
+
+[% INCLUDE footer.html %]

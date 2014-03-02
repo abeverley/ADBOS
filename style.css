@@ -50,7 +50,6 @@ DIV.banner {
 
 DIV.username {
     float: left;
-    padding-left: 300px;
     position:absolute;
     bottom:0;
     right:0;
@@ -186,7 +185,7 @@ textarea.formstyle {
 label.formstyle {
 	vertical-align: middle;
 	display: inline-block;
-	width: 100px;
+	width: 200px;
 }
 
 textarea.comments{
@@ -227,9 +226,6 @@ td.bottom{
 }
 
 #menu {
-    position: absolute;
-    bottom:0;
-    height: 100%;    
 }
 
 #menu ul {

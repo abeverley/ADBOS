@@ -26,6 +26,12 @@
     [% END %]
     </ul>
   </div>
+  <div style="float:left">
+      <form action="/search">
+          <input type="text" name="signal">
+          <input type="submit" name="submit" value="Quick search">
+      </form>
+  </div>
   <div class="username">
   [% IF user %]
     Logged in as <a href="/myaccount">[% user.username %]</a>
