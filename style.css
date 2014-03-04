@@ -216,6 +216,14 @@ td.bottom{
     vertical-align:bottom;
 }
 
+#logo {
+        margin-top: 20px;
+        margin-bottom: 20px;
+	clear: both;
+        display: block;
+        overflow: auto;
+}
+
 #footer {
         margin-top: 20px;
         padding-top: 5px;
