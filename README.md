@@ -47,3 +47,8 @@ a2enmod apreq
 * Import the SQL database
 * Configure firewall and Postfix if required
 
+* Enable init scripts:
+```
+update-rc.d process-sigs.rc defaults
+update-rc.d serial-dump.rc defaults
+
