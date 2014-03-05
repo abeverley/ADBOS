@@ -1,8 +1,14 @@
 #!/bin/bash
 
-install -m 644 ADBOS/* /usr/local/share/perl/5.10.1/ADBOS/
-mkdir -p /usr/local/share/perl/5.10.1/ADBOS/Schema/Result
-install -m 644 ADBOS/Schema/Result/* /usr/local/share/perl/5.10.1/ADBOS/Schema/Result
+# Find out Perl version
+pv=`perl -v|grep 'This is perl'`
+
+[[ $pv =~ v([.0-9]+) ]]
+perlv=${BASH_REMATCH[1]}
+
+install -m 644 ADBOS/* /usr/local/share/perl/$perlv/ADBOS/
+mkdir -p /usr/local/share/perl/$perlv/ADBOS/Schema/Result
+install -m 644 ADBOS/Schema/Result/* /usr/local/share/perl/$perlv/ADBOS/Schema/Result
 cp *.css /var/www/opdef.andybev.com/
 cp images/* /var/www/opdef.andybev.com/images/
 cp index.pl /var/www/opdef.andybev.com/
