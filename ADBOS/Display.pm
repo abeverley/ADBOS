@@ -337,7 +337,7 @@ sub ship($$$)
           all    => $all,
           user   => $user,
           tasks  => \@tasks,
-          period => ($period // 1),
+          period => ($period || 1),
           title  => $title
         };
 
