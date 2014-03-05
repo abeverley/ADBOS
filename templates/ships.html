@@ -32,7 +32,7 @@
   <p>Showing only extant and recently rectified OPDEFs. (<a href="?all=1">Show
   all OPDEFs</a>.)</p>
   [% END %]
-  <table>
+  <table class="opdeflist">
   [% FOREACH opdef IN opdefs %]
 
     [% IF opdef.modified.epoch > time - 86400 * period %]

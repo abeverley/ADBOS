@@ -1,0 +1,97 @@
+#! /bin/bash
+
+### BEGIN INIT INFO
+# Provides:          serial-dump
+# Required-Start:    $remote_fs $syslog mysql
+# Required-Stop:     $remote_fs $syslog mysql
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Manages serial-dump script
+# Description:       Manages the script that dumps signals from RS232 to the file cache
+### END INIT INFO
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+NAME=serial-dump
+DAEMON=/usr/local/opdef/$NAME
+SNAME=serial-dump # Name of script
+DESC="ADBOS signal dump script"
+PIDFILE="/var/run/$NAME.pid"
+XNAME=/usr/bin/perl # Needed when start-stop-daemon is searching for process
+# export SIMPLE_CONF=/usr/local/simplelists/etc/resend.conf
+
+. /lib/lsb/init-functions
+
+test -f $DAEMON || exit 0
+
+case "$1" in
+  start)
+        log_daemon_msg "Starting $DESC" "$NAME "
+
+        # Start the daemon, phase 1: see if it is already running.
+        start-stop-daemon --start --pidfile $PIDFILE --exec $XNAME \
+                --startas $DAEMON --test > /dev/null
+        if [ "$?" != "0" ]; then
+                log_warning_msg "(already running)"
+                exit 0
+        fi
+
+        # Start the daemon, phase 2: it was not running, so actually start it now.
+        start-stop-daemon --start --quiet --pidfile $PIDFILE --name $NAME \
+                --exec $DAEMON
+        if [ "$?" -ne "0" ]; then
+                log_end_msg 1
+                exit 1
+        fi
+
+        # Started successfully.
+        log_end_msg 0
+        exit 0
+	;;
+
+
+  stop)
+	log_action_begin_msg "Stopping $DESC"
+
+        # See if it is actually running
+	start-stop-daemon --stop --pidfile $PIDFILE --name $NAME \
+	        --exec $XNAME --test > /dev/null
+        if [ "$?" -eq "1" ]; then
+                # Already stopped.
+                log_warning_msg "(not running)"
+                exit 0
+        fi
+
+        # Stop it
+	start-stop-daemon --stop --pidfile $PIDFILE --name $NAME \
+	        --exec $XNAME --retry TERM/forever/TERM/5
+
+        if [ "$?" -eq "2" ]; then
+                # Failed to stop.
+                log_action_end_msg 1
+                exit 2
+        fi  
+
+
+        if [ "$?" -eq "0" ]; then
+                # Success
+                log_action_end_msg 0
+        fi
+	;;
+
+
+  reload|force-reload|restart)
+	log_daemon_msg "Restarting $DESC"
+	$0 stop
+	$0 start
+	;;
+
+
+  *)
+	N=/etc/init.d/$SNAME
+	echo "Usage: $N {start|stop|restart|reload|force-reload|status}" >&2
+	exit 1
+	;;
+
+esac
+
+exit 0

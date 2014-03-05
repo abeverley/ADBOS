@@ -1,0 +1,14 @@
+[% INCLUDE header.html %]
+
+<h2>System Status</h2>
+
+<div>
+<table>
+<tr><th>TI number</th><th>Time received (GMT)</th>
+[% FOR sig IN sigs %]
+<tr><td align="center">[% sig.ti %]</td><td align="center">[% sig.received %]</td></tr>
+[% END %]
+</table>
+</div>
+
+[% INCLUDE footer.html %]

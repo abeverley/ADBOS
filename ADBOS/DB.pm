@@ -8,6 +8,11 @@ use ADBOS::Schema;
 use ADBOS::Parse;
 use DateTime::Format::Strptime;
 use String::Random;
+use Apache::Solr           ();
+use Apache::Solr::Document ();
+use ADBOS::Config;
+
+my $config = simple_config;
 
 =pod
 
@@ -56,7 +61,7 @@ sub opdefSummary($$)
 
     my $opdef_rs = $self->sch->resultset('Opdef');
 
-    my @opdefs = $opdef_rs->search(%$search,
+    my @opdefs = $opdef_rs->search($search,
         { prefetch => ['category', 'modified_sigtype', 'signals', { ship => 'task' } ],
           order_by => $sort,
           rows     => 200
@@ -305,9 +310,39 @@ sub sigtypeSearch($)
     $sigtype;
 }
 
+sub opdefIndex($)
+{   my ($self, $opdefs_id) = @_;
+    my $url = $config->{solrurl};
+    my $solr    = Apache::Solr->new(server => $url);
+
+    my @fields = qw(type number_serial number_year erg_code parent_equip defective_unit
+                          line5 defect repair_int assistance assistance_port matdem remarks);
+    # First we need to create a new hash with *all* the data in: if we are updating
+    # an OPDEF and the old data is unchanged and therefore not in the SITREP, then
+    # it will otherwise be removed from Solr.
+    my $opdef_rs = $self->sch->resultset('Opdef');
+    my $opdef = $opdef_rs->find($opdefs_id);
+    my $indexdata;
+    foreach my $field (@fields)
+    {
+        $indexdata->{$field} = $opdef->$field // '';
+    }
+    $indexdata->{id}       = $opdefs_id;
+    $indexdata->{category} = $opdef->category->name; # Convert to string from ID
+    $indexdata->{ship}     = $opdef->ship->name; # Convert to string from ID
+    $indexdata->{modified} = $opdef->modified->strftime('%FT%TZ');
+    my $doc = Apache::Solr::Document->new( fields => $indexdata );
+    my @signals = $opdef->signals->all;
+    foreach my $sig (@signals)
+    {
+        $doc->addField(signal => $sig->content);
+    }
+    my $results = $solr->addDocument($doc);
+    $results or die $results->errors;
+}
+
 sub opdefStore($$)
 {   my ($self, $opdefin, $ships_id) = @_;
-
     return if !$ships_id;
     my $opdefs_id;
     my %newdata;
@@ -316,12 +351,14 @@ sub opdefStore($$)
                           line5 defect repair_int assistance assistance_port matdem remarks);
     @newdata{@fields} = undef;
     @newdata{ keys %newdata } = @$opdefin{ keys %newdata };
+
     my $defrep = $opdefin->{opdef} eq 'DEFREP' ? 1 : 0;
     $newdata{defrep} = 1 if $defrep;
 
-    # Get the ID of the category
+    # Convert category string to database ID number
+    my $catname = $opdefin->{category};
     my $category_rs = $self->sch->resultset('Category');
-    my $c = $category_rs->find($opdefin->{category}, { key => 'name' });
+    my $c = $category_rs->find($catname, { key => 'name' });
     $newdata{category} = $c->id if $c;
                 
     my $opdef_rs = $self->sch->resultset('Opdef');
@@ -409,6 +446,7 @@ sub opdefStore($$)
             $opdef->update({ cancelled => 1 }) if $opdefin->{format} eq 'CANCEL';
         }
     }
+
     $opdefs_id;
 }
 
@@ -441,6 +479,9 @@ sub signalStore($$;$$$)
     my $opdef = $opdef_rs->find($opdefs_id) if $opdefs_id;
     $opdef->update({ modified => \'UTC_TIMESTAMP()', modified_sigtype => $ss }) if $opdef;
 
+    # Store the OPDEF in Solr for search.
+    $self->opdefIndex($opdefs_id);
+
     $id;
 }
 
@@ -456,6 +497,12 @@ sub matdemStore($)
 {   my ($self, $content) = @_;
     my $matdem_rs = $self->sch->resultset('Matdem');
     $matdem_rs->create({ content => $content })->id;
+}
+
+sub log($$)
+{   my ($self, $source, $message) = @_;
+    my $log_rs = $self->sch->resultset('Log');
+    $log_rs->create({ source => $source, message => $message, time => \'UTC_TIMESTAMP()', users_id => $self->user->{id} })->id;
 }
 
 sub userCreate($)
@@ -614,6 +661,12 @@ sub resetpwCreate($)
     };
     
     $user->update({ resetpw => $code }) ? $code : 0;
+}
+
+sub sequenceGet()
+{   my $self = shift;
+    my $sequence_rs = $self->sch->resultset('Sequence');
+    $sequence_rs->search({}, {order_by => { '-desc' =>  [ 'me.received' ] }})->all;
 }
 
 sub taskAll()

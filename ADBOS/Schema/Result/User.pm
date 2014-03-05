@@ -213,9 +213,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 logs
 
-# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-06-29 16:33:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:0s7S4GeUcPHBcZwCc0qhdA
+Type: has_many
+
+Related object: L<ADBOS::Schema::Result::Log>
+
+=cut
+
+__PACKAGE__->has_many(
+  "logs",
+  "ADBOS::Schema::Result::Log",
+  { "foreign.users_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07025 @ 2013-09-04 07:25:51
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:yvYcBWEs1D5drEd2xDLIOA
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

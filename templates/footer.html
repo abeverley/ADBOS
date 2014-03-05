@@ -1,12 +1,17 @@
 <div id="footer">
     [% IF status %]
         [% IF status.last_signal.epoch > time - signal_timeout %]
-            <div class="green">Last signal received: [% status.last_signal.strftime("%F %H:%M") %]</div>
+            <div class="green"><a href="/status">Last signal received</a>: [% status.last_signal.strftime("%F %H:%M") %]</div>
         [% ELSE %]
-            <div class="red">Last signal received: [% status.last_signal.strftime("%F %H:%M") %]</div>
+            <div class="red"><a href="/status">Last signal received</a>: [% status.last_signal.strftime("%F %H:%M") %]</div>
         [% END %]
     [% END %]
 </div>
+<div id="logo">
+    <span style="float:left"><a href="http://www.ctrlo.com"><img style="vertical-align:bottom" src="/images/ctrlo.png"></a></span>
+    <span style="float:right"><strong>Produced by Ctrl O</strong> | <a href="http://www.ctrlo.com">www.ctrlo.com</a></span>
+</div>
+
 
 </body>
 </html>

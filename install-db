@@ -3,6 +3,8 @@
 install -m 644 ADBOS/* /usr/local/share/perl/5.10.1/ADBOS/
 mkdir -p /usr/local/share/perl/5.10.1/ADBOS/Schema/Result
 install -m 644 ADBOS/Schema/Result/* /usr/local/share/perl/5.10.1/ADBOS/Schema/Result
-install -m 755 process.pl /usr/local/opdef/
-install -m 755 serial-dump.pl /usr/local/opdef/
+install -m 755 process-sigs /usr/local/opdef/
+install -m 755 serial-dump /usr/local/opdef/
 install -m 755 testparse.pl /usr/local/opdef/
+install -m 755 process-sigs.rc /etc/init.d/
+install -m 755 serial-dump.rc /etc/init.d/

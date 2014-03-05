@@ -36,7 +36,11 @@ unless ($guest || $user)
     $guest = $display->syops($auth);
 }
 
-if ($req->unparsed_uri =~ m!^/+summary/?!gi)
+if ($req->unparsed_uri =~ m!^/+search/?!gi)
+{
+    $display->search($user);
+}
+elsif ($req->unparsed_uri =~ m!^/+summary/?!gi)
 {
     $display->summary($user);
 }
@@ -61,6 +65,12 @@ elsif ($req->unparsed_uri =~ m!^/+unparsed/?(new|[0-9]*)!gi)
         my $id = $q->param('id') || $1;
         $display->unparsed($user, $id);
     }
+}
+elsif ($req->unparsed_uri =~ m!^/+backup!gi)
+{
+    $user = $auth->login if !$user;
+    $display->main($user) unless ($user->{type} eq 'admin');
+    $display->backup($req);
 }
 elsif ($req->unparsed_uri =~ m!^/+users/?([0-9]*)!gi)
 {
@@ -111,6 +121,11 @@ elsif ($req->unparsed_uri =~ m!^/+emailpw/?!gi && !$user)
 {
     # Request password reset
     $display->pwResetRequestEmail;
+}
+elsif ($req->unparsed_uri =~ m!^/+status/?!gi)
+{
+    # Show status
+    $display->sequence;
 }
 else
 {
