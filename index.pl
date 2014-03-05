@@ -66,6 +66,12 @@ elsif ($req->unparsed_uri =~ m!^/+unparsed/?(new|[0-9]*)!gi)
         $display->unparsed($user, $id);
     }
 }
+elsif ($req->unparsed_uri =~ m!^/+backup!gi)
+{
+    $user = $auth->login if !$user;
+    $display->main($user) unless ($user->{type} eq 'admin');
+    $display->backup($req);
+}
 elsif ($req->unparsed_uri =~ m!^/+users/?([0-9]*)!gi)
 {
     $user = $auth->login if !$user;

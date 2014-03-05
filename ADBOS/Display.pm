@@ -12,6 +12,7 @@ use ADBOS::Email;
 use Email::Valid;
 use Apache::Solr           ();
 use Apache::Solr::Document ();
+use POSIX qw/strftime/;
 
 my $config = simple_config;
 my $db     = ADBOS::DB->new($config);
@@ -266,6 +267,15 @@ sub opdef($$$;$)
         };
 
     $self->_standard_template('opdef.html', $vars);
+}
+
+sub backup($)
+{   my ($self,$req) = @_;
+
+    $req->content_type("text/sql; charset=utf-8");
+    my $date = strftime "%Y%m%d", localtime;
+    $req->headers_out->add('Content-disposition' => "attachment; filename=$date-adbosbackup-R.sql");
+    $req->sendfile($config->{backup});
 }
 
 sub brief()
