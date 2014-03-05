@@ -895,7 +895,7 @@
 
    <field name="id" type="string" indexed="true" stored="true" required="true" /> 
    <field name="modified" type="date" indexed="true" stored="false" required="true" /> 
-   <field name="type" type="sting" indexed="true" stored="true" required="true" /> 
+   <field name="type" type="string" indexed="true" stored="true" required="true" /> 
    <field name="ship" type="string" indexed="true" stored="true" required="true" /> 
    <field name="defrep" type="int" indexed="true" stored="false" required="false" />
    <field name="number_serial" type="int" indexed="true" stored="true" required="true" /> 
