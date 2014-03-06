@@ -896,7 +896,7 @@
    <field name="id" type="string" indexed="true" stored="true" required="true" /> 
    <field name="modified" type="date" indexed="true" stored="false" required="true" /> 
    <field name="type" type="string" indexed="true" stored="true" required="true" /> 
-   <field name="ship" type="string" indexed="true" stored="true" required="true" /> 
+   <field name="ship" type="text_general" indexed="true" stored="true" required="true" /> 
    <field name="defrep" type="int" indexed="true" stored="false" required="false" />
    <field name="number_serial" type="int" indexed="true" stored="true" required="true" /> 
    <field name="number_year" type="int" indexed="true" stored="true" required="true" /> 
@@ -909,7 +909,7 @@
    <field name="repair_int" type="text_en" indexed="true" stored="false" required="false" /> 
    <field name="assistance" type="text_en" indexed="true" stored="false" required="false" /> 
    <field name="assistance_port" type="text_general" indexed="false" stored="true" required="false" /> 
-   <field name="matdem" type="string" indexed="true" stored="false" required="false" /> 
+   <field name="matdem" type="text_general" indexed="true" stored="false" required="false" /> 
    <field name="remarks" type="text_en" indexed="true" stored="false" required="false" /> 
    <field name="signal" type="text_en" indexed="true" stored="true" required="true" multiValued="true"/> 
 
