@@ -325,7 +325,13 @@ sub opdefIndex($)
     my $indexdata;
     foreach my $field (@fields)
     {
-        $indexdata->{$field} = $opdef->$field // '';
+        if ($field eq 'number_serial' || $field eq 'number_year')
+        {
+            $indexdata->{$field} = $opdef->$field || 0;
+        }
+        else {
+            $indexdata->{$field} = $opdef->$field // '';
+        }
     }
     $indexdata->{id}       = $opdefs_id;
     $indexdata->{category} = $opdef->category->name; # Convert to string from ID
