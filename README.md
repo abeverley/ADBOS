@@ -27,6 +27,8 @@ libdatetime-format-duration-perl
 
 * Download and install the following Perl modules (not available as Debian packages):
 ```
+Sub::Exporter::Progressive
+Devel::GlobalDestruction
 Unicode::LineBreak
 String::Print
 Log::Report::Optional
